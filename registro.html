@@ -105,6 +105,24 @@
         .fc-col-header-cell-cushion { font-size: 0.75rem; text-transform: uppercase; color: #9CA3AF; text-decoration: none; }
         .fc-event { border-radius: 4px !important; font-size: 0.75rem !important; cursor: pointer; border: none !important; }
 
+        /* --- BOTONES DE FILTRO (MODERNO) --- */
+        .btn-filter {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 6px 18px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+        .btn-filter:hover { background: #f8fafc; }
+        .btn-filter.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
         /* --- LISTA DE GESTIÓN MEJORADA --- */
         .event-manage-item {
             background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px;
@@ -225,14 +243,14 @@
             <div id="calendar"></div>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 px-2">
             <h6 class="fw-bold m-0" style="color: var(--primary-blue);">📋 Lista de Actividades</h6>
-            <select id="filtro-estado" class="form-select form-select-sm w-auto" style="border-radius: 10px; font-weight: 600;" onchange="filtrarActividades()">
-                <option value="Todos">🔍 Ver Todos</option>
-                <option value="Agendado">✅ Agendados</option>
-                <option value="Solicitado">⏳ Solicitados</option>
-                <option value="Realizado">✔ Realizados</option>
-            </select>
+            <div class="filter-container d-flex gap-2 mt-2 mt-sm-0">
+                <button class="btn-filter active" onclick="filtrarActividades('Todos', this)">Todos</button>
+                <button class="btn-filter" onclick="filtrarActividades('Solicitado', this)">Solicitados</button>
+                <button class="btn-filter" onclick="filtrarActividades('Agendado', this)">Agendados</button>
+                <button class="btn-filter" onclick="filtrarActividades('Realizado', this)">Realizados</button>
+            </div>
         </div>
         
         <div id="lista-gestion">
@@ -247,7 +265,7 @@
 <script>
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec"; 
     let isEditing = false;
-    let eventosData = []; // Variable global para guardar los datos y filtrar
+    let eventosData = []; 
 
     document.addEventListener('DOMContentLoaded', function() {
         const ahora = new Date();
@@ -304,8 +322,11 @@
         calendar.render();
     }
 
-    function filtrarActividades() {
-        const filtro = document.getElementById('filtro-estado').value;
+    function filtrarActividades(filtro, btn) {
+        // Manejo de clase activa para los botones
+        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
         if (filtro === "Todos") {
             renderLista(eventosData);
         } else {
@@ -321,7 +342,6 @@
         const listaOrdenada = eventos.sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora));
 
         listaOrdenada.forEach(ev => {
-            // Manejo de fecha seguro para evitar desfasaje horario al mostrar en lista
             const d = new Date(ev.Fecha_Hora.replace('T', ' ').replace(/-/g, '/'));
             contenedor.innerHTML += `
                 <div class="event-manage-item">
@@ -357,8 +377,6 @@
         document.getElementById('estado').value = ev.Estado;
 
         if (ev.Fecha_Hora) {
-            // CORRECCIÓN DE HORA: Tratamos el valor como texto puro para que el input datetime-local no lo desfase
-            // ev.Fecha_Hora ya viene en formato YYYY-MM-DDTHH:mm del AppScript
             let fechaLimpia = ev.Fecha_Hora.split('.')[0]; 
             document.getElementById('fecha_hora').value = fechaLimpia;
         }
