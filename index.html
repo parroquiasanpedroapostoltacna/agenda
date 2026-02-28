@@ -3,146 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Parroquial | Panel Profesional</title>
+    <title>Agenda Parroquial | Vista Oficial</title>
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --azul-parroquia: #1A365D; /* Azul serio */
-            --rojo-parroquia: #A82025; /* Rojo institucional */
-            --bg-gris: #F8FAFC;
-            --texto: #334155;
+            --azul-parroquia: #1A365D;
+            --rojo-parroquia: #A82025;
+            --bg-color: #F2F4F7;
+            --border: #E5E7EB;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-gris);
-            color: var(--texto);
-            padding-bottom: 30px;
+            background-color: var(--bg-color);
+            color: #334155;
+            margin: 0; padding: 0;
         }
 
-        /* Contenedor Principal Estilo BraiO */
-        .glass-panel {
-            background: white;
-            border-radius: 20px;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            padding: 25px;
-            margin-top: 20px;
+        /* HEADER (Segunda Foto) */
+        .header-oficial {
+            padding: 20px 0;
+            background: transparent;
         }
-
-        .header-section {
+        .header-oficial h1 {
+            color: var(--azul-parroquia);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+        .header-line {
             border-bottom: 2px solid var(--azul-parroquia);
-            padding-bottom: 15px;
+            margin-top: 10px;
             margin-bottom: 25px;
         }
-
-        /* Lista de Próximos Eventos */
-        .upcoming-card {
+        .date-badge {
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 10px;
             background: white;
-            border-left: 5px solid var(--rojo-parroquia);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            transition: 0.3s;
-            cursor: pointer;
-            border-top: 1px solid #edf2f7;
-            border-right: 1px solid #edf2f7;
-            border-bottom: 1px solid #edf2f7;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
-        .upcoming-card:hover { background: #F1F5F9; transform: translateX(5px); }
 
-        /* Calendario Compacto */
-        #calendar {
+        /* LAYOUT (Primera Foto) */
+        .app-layout {
+            display: flex;
+            gap: 20px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .sidebar {
+            width: 320px;
             background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .main-calendar {
+            flex-grow: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        /* Sidebar Elements */
+        .sidebar-brand { font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+        .sidebar-sub { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
+        .hoy-label { color: #94a3b8; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+        .hoy-fecha { font-size: 1.8rem; font-weight: 800; line-height: 1.2; color: #1e293b; margin-bottom: 30px; }
+
+        /* Lista de Próximos */
+        .proximos-titulo { font-weight: 700; font-size: 0.9rem; color: var(--azul-parroquia); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .event-item {
             padding: 10px;
-            border-radius: 15px;
-            max-width: 100%;
+            border-radius: 12px;
+            border-left: 4px solid var(--rojo-parroquia);
+            background: #f8fafc;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
         }
+        .event-item:hover { background: #f1f5f9; }
+        .event-item-title { font-weight: 700; font-size: 0.95rem; display: block; }
+        .event-item-time { font-size: 0.85rem; color: #64748b; }
 
-        /* Estilo para Gente Mayor (Letras grandes) */
-        .modal-title { font-weight: 700; color: var(--azul-parroquia); font-size: 1.6rem; }
-        .modal-body p { font-size: 1.2rem; margin-bottom: 10px; }
-        .label-detail { font-weight: 700; color: var(--rojo-parroquia); text-transform: uppercase; font-size: 0.85rem; display: block; }
+        /* Estilo Ventana Emergente (Modal) */
+        .modal-content { border-radius: 24px; border: none; overflow: hidden; }
+        .modal-header { background: var(--azul-parroquia); color: white; border: none; }
+        .modal-body { padding: 30px; font-size: 1.1rem; }
+        .modal-label { color: var(--rojo-parroquia); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
 
-        /* Ajustes de Calendario */
-        .fc-toolbar-title { font-size: 1.1rem !important; font-weight: 700; }
-        .fc-button-primary { background-color: var(--azul-parroquia) !important; border: none !important; }
-        
-        @media (max-width: 768px) {
-            .glass-panel { padding: 15px; border-radius: 0; margin-top: 0; }
-            .modal-dialog { margin: 10px; }
+        /* Responsive */
+        @media (max-width: 992px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .header-oficial h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container-fluid container-lg">
-    <!-- Encabezado -->
-    <div class="header-section mt-4 d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="h3 fw-bold mb-0" style="color: var(--azul-parroquia);">⛪ Agenda Parroquial</h1>
-            <p class="text-muted mb-0">Comunidad de Agentes Pastorales</p>
+<div class="container-fluid px-4">
+    <!-- Header (Segunda Foto) -->
+    <div class="header-oficial">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>⛪ Agenda Parroquial</h1>
+                <p class="text-muted mb-0">Comunidad de Agentes Pastorales</p>
+            </div>
+            <div class="date-badge" id="header-date">--</div>
         </div>
-        <div class="d-none d-md-block text-end">
-            <span class="badge bg-light text-dark border p-2" id="current-time"></span>
-        </div>
+        <div class="header-line"></div>
     </div>
 
-    <div class="row g-4">
-        <!-- Columna Izquierda: Próximos Eventos -->
-        <div class="col-lg-4 order-2 order-lg-1">
-            <h5 class="fw-bold mb-3">🔔 Próximos Eventos</h5>
-            <div id="lista-eventos" style="max-height: 600px; overflow-y: auto; padding-right: 5px;">
-                <!-- Cargando dinámicamente -->
-                <p class="text-muted small">Cargando actividades...</p>
+    <!-- Layout (Primera Foto) -->
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <div class="sidebar shadow-sm">
+            <div class="sidebar-brand">Parroquia</div>
+            <div class="sidebar-sub">GESTIÓN DE AGENDA</div>
+
+            <div class="hoy-label">HOY</div>
+            <div class="hoy-fecha" id="hoy-fecha-grande">--</div>
+
+            <div class="proximos-titulo">🔔 PRÓXIMOS EVENTOS</div>
+            <div id="lista-proximos">
+                <!-- Se llena dinámicamente -->
+                <p class="text-muted small">Cargando...</p>
             </div>
+            
+            <p class="text-muted small mt-4" style="line-height: 1.4;">Haz clic en un evento del calendario para ver los detalles aquí o en pantalla completa.</p>
         </div>
 
-        <!-- Columna Derecha: Calendario Compacto -->
-        <div class="col-lg-8 order-1 order-lg-2">
-            <div class="glass-panel">
-                <h5 class="fw-bold mb-3">📅 Calendario Mensual</h5>
-                <div id="calendar"></div>
-            </div>
+        <!-- Main Content -->
+        <div class="main-calendar shadow-sm">
+            <h5 class="fw-bold mb-4" style="color: var(--azul-parroquia);">Calendario de Actividades</h5>
+            <div id="calendar"></div>
         </div>
     </div>
 </div>
 
-<!-- Modal de Detalles (Ventana Emergente para el Padre) -->
-<div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
+<!-- Ventana Emergente (Modal) -->
+<div class="modal fade" id="eventModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
-            <div class="modal-header text-white" style="background: var(--azul-parroquia);">
-                <h5 class="modal-title text-white" id="modalTitle">Detalle del Evento</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="m-titulo">Detalle de Actividad</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-4">
-                <div class="row">
-                    <div class="col-6 mb-3">
-                        <span class="label-detail">📅 Fecha</span>
-                        <p id="m-fecha" class="fw-bold text-dark">--</p>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="modal-label">Fecha</div>
+                        <div id="m-fecha" class="fw-bold"></div>
                     </div>
-                    <div class="col-6 mb-3">
-                        <span class="label-detail">⏰ Hora</span>
-                        <p id="m-hora" class="fw-bold text-dark">--</p>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <span class="label-detail">📍 Lugar</span>
-                        <p id="m-lugar" class="fw-bold text-dark">--</p>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <span class="label-detail">👥 Grupo Parroquial</span>
-                        <p id="m-grupo" class="fw-bold text-dark">--</p>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <span class="label-detail">📖 Descripción</span>
-                        <p id="m-desc" class="text-muted" style="font-size: 1.1rem;"></p>
+                    <div class="col-6">
+                        <div class="modal-label">Hora</div>
+                        <div id="m-hora" class="fw-bold"></div>
                     </div>
                     <div class="col-12">
-                        <span id="m-estado" class="badge p-2 w-100 fs-6">--</span>
+                        <div class="modal-label">Lugar</div>
+                        <div id="m-lugar" class="fw-bold"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="modal-label">Grupo Responsable</div>
+                        <div id="m-grupo" class="fw-bold"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="modal-label">Descripción</div>
+                        <p id="m-desc" class="text-secondary"></p>
+                    </div>
+                    <div class="col-12">
+                        <div id="m-estado" class="badge p-2 w-100 fs-6"></div>
                     </div>
                 </div>
             </div>
@@ -155,18 +198,21 @@
 
 <script>
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
-    let modalObj;
+    let bootstrapModal;
 
     document.addEventListener('DOMContentLoaded', function() {
-        modalObj = new bootstrap.Modal(document.getElementById('eventModal'));
-        actualizarReloj();
+        bootstrapModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        
+        // Poner fechas actuales
+        const hoy = new Date();
+        const opcionesLargas = { day: 'numeric', month: 'long', year: 'numeric' };
+        const opcionesCortas = { weekday: 'long', day: 'numeric', month: 'short' };
+        
+        document.getElementById('hoy-fecha-grande').innerText = hoy.toLocaleDateString('es-ES', opcionesLargas);
+        document.getElementById('header-date').innerText = hoy.toLocaleDateString('es-ES', opcionesCortas);
+
         cargarDatos();
     });
-
-    function actualizarReloj() {
-        const ahora = new Date();
-        document.getElementById('current-time').innerText = ahora.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
-    }
 
     function cargarDatos() {
         fetch(APP_URL)
@@ -180,57 +226,63 @@
     function renderCalendario(eventos) {
         const calendarEl = document.getElementById('calendar');
         const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
             locale: 'es',
-            height: 450, // Calendario más compacto
-            headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+            height: 'auto',
+            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
             events: eventos.map(ev => ({
                 title: ev.Titulo,
                 start: ev.Fecha_Hora,
                 extendedProps: ev,
-                color: ev.Estado === 'Agendado' ? '#1A365D' : '#A82025'
+                backgroundColor: ev.Estado === 'Agendado' ? '#1A365D' : '#A82025',
+                borderColor: 'transparent'
             })),
-            eventClick: (info) => abrirModal(info.event.extendedProps)
+            eventClick: (info) => mostrarModal(info.event.extendedProps)
         });
         calendar.render();
     }
 
     function renderLista(eventos) {
-        const contenedor = document.getElementById('lista-eventos');
+        const contenedor = document.getElementById('lista-proximos');
         contenedor.innerHTML = "";
         
-        // Ordenar y filtrar (próximos)
-        const proximos = eventos.filter(e => new Date(e.Fecha_Hora) >= new Date()).slice(0, 8);
+        // Solo eventos futuros
+        const hoy = new Date();
+        const proximos = eventos
+            .filter(ev => new Date(ev.Fecha_Hora) >= hoy)
+            .sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora))
+            .slice(0, 5);
+
+        if(proximos.length === 0) {
+            contenedor.innerHTML = "<p class='small text-muted'>No hay eventos próximos.</p>";
+            return;
+        }
 
         proximos.forEach(ev => {
-            const fecha = new Date(ev.Fecha_Hora);
+            const d = new Date(ev.Fecha_Hora);
             contenedor.innerHTML += `
-                <div class="upcoming-card shadow-sm" onclick='abrirModal(${JSON.stringify(ev)})'>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h6 class="fw-bold mb-1" style="color: var(--azul-parroquia);">${ev.Titulo}</h6>
-                        <small class="badge bg-light text-dark border">${fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
-                    </div>
-                    <div class="small text-muted">📍 ${ev.Lugar}</div>
-                    <div class="small fw-bold mt-1" style="color: var(--rojo-parroquia);">${fecha.toLocaleDateString('es-ES', {day:'numeric', month:'short'})}</div>
+                <div class="event-item" onclick='mostrarModal(${JSON.stringify(ev)})'>
+                    <span class="event-item-title">${ev.Titulo}</span>
+                    <span class="event-item-time">📅 ${d.toLocaleDateString()} - ${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
                 </div>
             `;
         });
     }
 
-    function abrirModal(ev) {
-        const fecha = new Date(ev.Fecha_Hora);
-        document.getElementById('modalTitle').innerText = ev.Titulo;
-        document.getElementById('m-fecha').innerText = fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        document.getElementById('m-hora').innerText = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    function mostrarModal(ev) {
+        const d = new Date(ev.Fecha_Hora);
+        document.getElementById('m-titulo').innerText = ev.Titulo;
+        document.getElementById('m-fecha').innerText = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+        document.getElementById('m-hora').innerText = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         document.getElementById('m-lugar').innerText = ev.Lugar;
-        document.getElementById('m-grupo').innerText = ev.Grupo || "General";
-        document.getElementById('m-desc').innerText = ev.Descripcion || "Sin detalles adicionales.";
+        document.getElementById('m-grupo').innerText = ev.Grupo || "No asignado";
+        document.getElementById('m-desc').innerText = ev.Descripcion || "Sin descripción.";
         
         const badge = document.getElementById('m-estado');
         badge.innerText = ev.Estado;
-        badge.className = `badge p-2 w-100 fs-6 ${ev.Estado === 'Agendado' ? 'bg-success' : 'bg-warning text-dark'}`;
+        badge.className = `badge p-2 w-100 fs-6 ${ev.Estado === 'Agendado' ? 'bg-primary' : 'bg-danger'}`;
         
-        modalObj.show();
+        bootstrapModal.show();
     }
 </script>
 </body>
