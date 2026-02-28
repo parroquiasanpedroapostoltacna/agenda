@@ -18,6 +18,7 @@
             --accent-red: #A82025;   /* Rojo parroquial elegante */
             --text-main: #1F2937;
             --border-color: #E5E7EB;
+            --base-font-size: 16px; /* Para control de tamaño de letra */
         }
 
         body {
@@ -25,7 +26,26 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0; padding: 0;
+            font-size: var(--base-font-size);
         }
+
+        /* --- CONTROL DE TAMAÑO DE LETRA --- */
+        .font-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .btn-font {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2px 10px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-font:hover { background: #f0f0f0; }
 
         /* --- ESTILO ENCABEZADO (FOTO 2) --- */
         .header-oficial {
@@ -89,7 +109,7 @@
         .event-item-title { font-weight: 700; font-size: 0.9rem; display: block; color: var(--primary-blue); }
         .event-item-info { font-size: 0.8rem; color: #64748b; }
 
-        /* --- CONTENIDO CALENDARIO (ESTILO FOTO) --- */
+        /* --- CONTENIDO CALENDARIO --- */
         .main-content {
             flex-grow: 1;
             background: var(--card-bg);
@@ -99,19 +119,33 @@
         }
         .header-title { font-weight: 700; font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 25px; }
 
-        /* FullCalendar Customization (Tu estilo exacto) */
+        /* FullCalendar Customization */
         .fc { border: none !important; }
         .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700 !important; color: #4B5563; }
+        
+        /* Ajuste de botones: más pequeños, en español y con separación */
         .fc-button { 
             background: #F9FAFB !important; 
             border: 1px solid var(--border-color) !important; 
             color: #4B5563 !important;
             text-transform: capitalize !important;
             border-radius: 8px !important;
+            padding: 4px 10px !important; /* Un poco más pequeños */
+            font-size: 0.85rem !important;
+            margin: 0 3px !important; /* Espaciado entre ellos */
         }
+        .fc-button-active {
+            background: var(--primary-blue) !important;
+            color: white !important;
+        }
+
         .fc-daygrid-day-number { font-size: 0.9rem; color: #6B7280; padding: 10px !important; text-decoration: none; }
         .fc-col-header-cell-cushion { font-size: 0.8rem; text-transform: uppercase; color: #9CA3AF; text-decoration: none; }
         .fc-event { border-radius: 6px !important; padding: 2px 5px !important; font-size: 0.85rem !important; border: none !important; cursor: pointer; }
+
+        /* Evitar scroll interno en calendario (Expandir altura) */
+        .fc-scroller { height: auto !important; overflow: hidden !important; }
+        .fc-view-harness { height: auto !important; min-height: 500px; }
 
         /* --- MODAL (VENTANA EMERGENTE) --- */
         .modal-content { border-radius: 24px; border: none; }
@@ -125,6 +159,7 @@
             .sidebar { width: 100%; padding: 20px; }
             .main-content { padding: 15px; border-radius: 15px; }
             .header-oficial h1 { font-size: 1.4rem; }
+            .fc-toolbar { flex-wrap: wrap; gap: 10px; }
         }
     </style>
 </head>
@@ -134,7 +169,15 @@
 <div class="header-oficial">
     <div class="d-flex justify-content-between align-items-center">
         <h1>⛪ Agenda Parroquial</h1>
-        <div class="date-badge" id="header-date">--</div>
+        <div class="d-flex align-items-center gap-3">
+            <!-- Botones de tamaño de letra -->
+            <div class="font-controls d-none d-md-flex">
+                <span class="small text-muted fw-bold">LETRA:</span>
+                <button class="btn-font" onclick="updateFontSize(-2)">A-</button>
+                <button class="btn-font" onclick="updateFontSize(2)">A+</button>
+            </div>
+            <div class="date-badge" id="header-date">--</div>
+        </div>
     </div>
     <div class="header-line"></div>
 </div>
@@ -208,14 +251,21 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
-    // URL DE TU APP SCRIPT
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
     let bootstrapModal;
+    let currentFontSize = 16;
+
+    // Función para cambiar tamaño de letra
+    function updateFontSize(delta) {
+        currentFontSize += delta;
+        if(currentFontSize < 12) currentFontSize = 12;
+        if(currentFontSize > 24) currentFontSize = 24;
+        document.documentElement.style.setProperty('--base-font-size', currentFontSize + 'px');
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         bootstrapModal = new bootstrap.Modal(document.getElementById('eventModal'));
         
-        // Configurar fechas iniciales
         const ahora = new Date();
         document.getElementById('hoy-fecha-grande').innerText = ahora.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('header-date').innerText = ahora.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
@@ -237,10 +287,20 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
             locale: 'es',
+            height: 'auto', // Esto evita el scroll interno y expande el calendario
+            contentHeight: 'auto',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek'
+            },
+            // Traducción manual de botones para asegurar español
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                list: 'Lista'
             },
             events: eventos.map(ev => ({
                 title: ev.Titulo,
