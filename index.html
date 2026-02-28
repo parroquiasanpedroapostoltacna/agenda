@@ -3,155 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Parroquial</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>⛪ Nuestra Agenda Parroquial</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --parroquia-rojo: #C62828;
-            --parroquia-azul: #1565C0;
-            --fuente-grande: 1.2rem;
-        }
-        body { 
-            background-color: #f8f9fa; 
-            font-size: 1.1rem; /* Apto para gente mayor */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .navbar { background-color: var(--parroquia-azul) !important; }
-        .btn-parroquia { background-color: var(--parroquia-rojo); color: white; border: none; font-weight: bold; }
-        .btn-parroquia:hover { background-color: #8e1b1b; color: white; }
+        :root { --primary: #1565C0; --secondary: #C62828; }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8f9fa; font-size: 1.2rem; }
         
-        /* Estilos de accesibilidad */
-        h1, h2 { color: var(--parroquia-azul); font-weight: 800; }
-        .fc-event { cursor: pointer; font-size: 1rem; padding: 2px; }
-        .card { border-radius: 15px; border-left: 8px solid var(--parroquia-rojo); }
-        .status-badge { font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; }
+        .navbar-parroquia {
+            background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px; border-bottom: 4px solid var(--secondary);
+        }
+        .calendar-card {
+            background: white; border-radius: 30px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
         
-        /* Ajuste para móviles y gente mayor */
-        .container { max-width: 1000px; }
-        input, select, textarea { font-size: 1.2rem !important; }
+        /* Estilo Lista Aesthetic */
+        .event-card {
+            background: white; border: none; border-radius: 20px;
+            margin-bottom: 15px; transition: 0.3s;
+            border-left: 10px solid var(--primary); padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .event-card:hover { transform: translateY(-5px); }
+        .event-title { color: var(--primary); font-weight: 700; font-size: 1.4rem; }
+        .event-meta { color: #666; font-size: 1.1rem; margin-top: 5px; }
+        .badge-status {
+            border-radius: 50px; padding: 8px 15px; font-weight: 600;
+        }
+        
+        /* Ajuste para gente mayor */
+        .fc .fc-toolbar-title { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .fc .fc-button-primary { background-color: var(--primary); border: none; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark mb-4">
-    <div class="container shadow-sm p-2">
-        <span class="navbar-brand mb-0 h1">⛪ Agenda Parroquial</span>
-        <button class="btn btn-light fw-bold" data-bs-toggle="modal" data-bs-target="#modalRegistro">➕ Nueva Actividad (Secretaría)</button>
+<nav class="navbar navbar-parroquia sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span class="navbar-brand mb-0 h1" style="color: var(--primary); font-weight: 800;">⛪ Comunidad en Oración</span>
+        <span class="fs-5">Hoy: <span id="fecha-hoy"></span></span>
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-4">
     <div class="row">
-        <!-- Vista Calendario -->
-        <div class="col-12 mb-5">
-            <div class="card p-4 shadow">
-                <h2 class="mb-4">📅 Calendario de Actividades</h2>
+        <!-- Calendario -->
+        <div class="col-lg-7">
+            <div class="calendar-card">
+                <h3 class="mb-4">📅 Vista Mensual</h3>
                 <div id="calendar"></div>
             </div>
         </div>
 
-        <!-- Vista Listado -->
-        <div class="col-12">
-            <div class="card p-4 shadow">
-                <h2 class="mb-4">📋 Lista de Eventos Próximos</h2>
-                <div id="lista-eventos" class="list-group">
-                    <!-- Los eventos se cargan aquí -->
-                    <p class="text-center">Cargando actividades...</p>
-                </div>
+        <!-- Listado -->
+        <div class="col-lg-5">
+            <h3 class="mb-4">🔔 Próximas Actividades</h3>
+            <div id="lista-eventos">
+                <!-- Se cargan dinámicamente -->
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal de Registro (Solo Secretarías) -->
-<div class="modal fade" id="modalRegistro" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background: var(--parroquia-azul); color: white;">
-                <h5 class="modal-title">Registrar Nueva Actividad</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formEvento">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Título del Evento</label>
-                        <input type="text" id="titulo" class="form-control" placeholder="Ej: Misa de San Judas" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Fecha y Hora</label>
-                            <input type="datetime-local" id="fecha_hora" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Lugar</label>
-                            <input type="text" id="lugar" class="form-control" placeholder="Ej: Templo Principal" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Grupo Parroquial</label>
-                            <input type="text" id="grupo" class="form-control" placeholder="Ej: Coro, Catequesis">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Estado</label>
-                            <select id="estado" class="form-select">
-                                <option value="Solicitado">Solicitado</option>
-                                <option value="Agendado" selected>Agendado</option>
-                                <option value="Realizado">Realizado</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Descripción</label>
-                        <textarea id="descripcion" class="form-control" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-parroquia w-100 p-3 fs-5">💾 Guardar Actividad</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
-    // URL DE TU APP SCRIPT (REEMPLAZA ESTO)
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
 
     document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('fecha-hoy').innerText = new Date().toLocaleDateString();
         cargarDatos();
-        
-        // Manejo del Formulario
-        document.getElementById('formEvento').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            btn.disabled = true;
-            btn.innerText = "Enviando...";
-
-            const datos = {
-                action: "crear",
-                titulo: document.getElementById('titulo').value,
-                fecha_hora: document.getElementById('fecha_hora').value,
-                lugar: document.getElementById('lugar').value,
-                grupo: document.getElementById('grupo').value,
-                estado: document.getElementById('estado').value,
-                descripcion: document.getElementById('descripcion').value
-            };
-
-            fetch(APP_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Necesario para AppScript
-                body: JSON.stringify(datos)
-            }).then(() => {
-                alert("¡Evento guardado con éxito!");
-                location.reload();
-            }).catch(err => alert("Error al guardar"));
-        });
     });
 
     function cargarDatos() {
@@ -168,49 +92,46 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'es',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek'
-            },
+            headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
             events: eventos.map(ev => ({
-                title: ev.Titulo,
+                title: "📍 " + ev.Titulo,
                 start: ev.Fecha_Hora,
-                extendedProps: { lugar: ev.Lugar, grupo: ev.Grupo },
-                color: ev.Estado === 'Solicitado' ? '#FFA000' : '#1565C0'
-            })),
-            eventClick: function(info) {
-                alert(`Evento: ${info.event.title}\nLugar: ${info.event.extendedProps.lugar}\nGrupo: ${info.event.extendedProps.grupo}`);
-            }
+                color: ev.Estado === 'Solicitado' ? '#FFC107' : '#1565C0'
+            }))
         });
         calendar.render();
     }
 
     function renderLista(eventos) {
-        const lista = document.getElementById('lista-eventos');
-        lista.innerHTML = "";
-        
+        const contenedor = document.getElementById('lista-eventos');
+        contenedor.innerHTML = "";
+
         if(eventos.length === 0) {
-            lista.innerHTML = "<p class='text-center'>No hay actividades registradas.</p>";
+            contenedor.innerHTML = "<h4>No hay eventos programados 😊</h4>";
             return;
         }
 
-        eventos.sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora));
-
         eventos.forEach(ev => {
-            const fecha = new Date(ev.Fecha_Hora).toLocaleString();
-            const item = `
-                <div class="list-group-item list-group-item-action flex-column align-items-start mb-2 border-primary">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h4 class="mb-1 text-primary fw-bold">${ev.Titulo}</h4>
-                        <small class="text-muted fs-6">${fecha}</small>
+            const fecha = new Date(ev.Fecha_Hora);
+            const card = `
+                <div class="event-card shadow-sm">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="event-title">${ev.Titulo}</div>
+                        <span class="badge ${ev.Estado === 'Agendado' ? 'bg-success' : 'bg-warning text-dark'} badge-status">
+                            ${ev.Estado === 'Agendado' ? '✅' : '⏳'} ${ev.Estado}
+                        </span>
                     </div>
-                    <p class="mb-1"><strong>📍 Lugar:</strong> ${ev.Lugar} | <strong>👥 Grupo:</strong> ${ev.Grupo}</p>
-                    <p class="text-secondary">${ev.Descripcion || ''}</p>
-                    <span class="badge bg-${ev.Estado === 'Agendado' ? 'success' : 'warning'} status-badge">${ev.Estado}</span>
+                    <div class="event-meta">
+                        <div>📅 ${fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+                        <div>⏰ ${fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                        <div>📍 Lugar: <b>${ev.Lugar}</b></div>
+                        <div>👥 Grupo: <i>${ev.Grupo}</i></div>
+                    </div>
+                    <hr>
+                    <p class="mb-0 text-muted">💬 ${ev.Descripcion || 'Sin descripción'}</p>
                 </div>
             `;
-            lista.innerHTML += item;
+            contenedor.innerHTML += card;
         });
     }
 </script>
