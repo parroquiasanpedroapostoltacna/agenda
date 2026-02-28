@@ -422,12 +422,22 @@
         document.getElementById('solicitante').value = ev.Solicitante || "";
         document.getElementById('descripcion').value = ev.Descripcion || "";
         document.getElementById('estado').value = ev.Estado;
-
+    
+        // --- SOLUCIÓN DEFINITIVA PARA LA HORA ---
         if (ev.Fecha_Hora) {
-            let fechaLimpia = ev.Fecha_Hora.split('.')[0]; 
+            // Forzamos a que la fecha sea un string y eliminamos cualquier indicador de zona horaria (Z o +00:00)
+            // El input datetime-local necesita estrictamente: YYYY-MM-DDTHH:mm
+            let fechaTexto = String(ev.Fecha_Hora);
+            let fechaLimpia = fechaTexto.replace('Z', '').split('.')[0]; 
+            
+            // Si por alguna razón viene con espacio en lugar de 'T', lo corregimos
+            if(fechaLimpia.includes(' ')) {
+                fechaLimpia = fechaLimpia.replace(' ', 'T');
+            }
+            
             document.getElementById('fecha_hora').value = fechaLimpia;
         }
-
+    
         const selectGrupo = document.getElementById('grupo_select');
         const inputOtro = document.getElementById('grupo_otro');
         const opciones = Array.from(selectGrupo.options).map(o => o.value);
@@ -440,7 +450,7 @@
             inputOtro.value = ev.Grupo;
             inputOtro.classList.remove('d-none');
         }
-
+    
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
