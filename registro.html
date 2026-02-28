@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✍️ Registro de Actividades</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1565C0; --secondary: #C62828; --bg: #f0f2f5;
+        }
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            background-color: var(--bg); color: #333; 
+            padding-bottom: 50px;
+        }
+        .admin-card {
+            background: white; border: none; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 30px;
+        }
+        .header-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; padding: 40px 20px; border-radius: 0 0 40px 40px;
+            margin-bottom: -40px; text-align: center;
+        }
+        .form-label { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
+        .form-control, .form-select {
+            border-radius: 12px; border: 2px solid #eee; padding: 12px;
+            font-size: 1.1rem; transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--secondary); box-shadow: none; }
+        .btn-save {
+            background: var(--secondary); color: white; border: none;
+            padding: 15px; border-radius: 15px; font-weight: 700; font-size: 1.3rem;
+            width: 100%; margin-top: 20px; transition: transform 0.2s;
+        }
+        .btn-save:active { transform: scale(0.98); }
+        .emoji-icon { font-size: 1.5rem; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="header-section">
+    <h1>📝 Registro Parroquial</h1>
+    <p>Secretaría: Ingresa los eventos con amor y orden ✨</p>
+</div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="admin-card">
+                <form id="formEvento">
+                    <div class="mb-4">
+                        <label class="form-label"><span class="emoji-icon">🏷️</span>Título del Evento</label>
+                        <input type="text" id="titulo" class="form-control" placeholder="Ej: Misa de Confirmación" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><span class="emoji-icon">⏰</span>Fecha y Hora</label>
+                            <input type="datetime-local" id="fecha_hora" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><span class="emoji-icon">📍</span>Lugar</label>
+                            <input type="text" id="lugar" class="form-control" placeholder="Ej: Salón Parroquial" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><span class="emoji-icon">👥</span>Grupo Responsable</label>
+                            <input type="text" id="grupo" class="form-control" placeholder="Ej: Catequistas">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><span class="emoji-icon">🚦</span>Estado</label>
+                            <select id="estado" class="form-select">
+                                <option value="Solicitado">⏳ Solicitado</option>
+                                <option value="Agendado" selected>✅ Agendado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label"><span class="emoji-icon">📖</span>Descripción corta</label>
+                        <textarea id="descripcion" class="form-control" rows="2" placeholder="Detalles importantes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-save">💾 Guardar en la Agenda</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
+
+    document.getElementById('formEvento').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        btn.innerText = "Guardando en la nube... ☁️";
+
+        const datos = {
+            action: "crear",
+            titulo: document.getElementById('titulo').value,
+            fecha_hora: document.getElementById('fecha_hora').value,
+            lugar: document.getElementById('lugar').value,
+            grupo: document.getElementById('grupo').value,
+            estado: document.getElementById('estado').value,
+            descripcion: document.getElementById('descripcion').value
+        };
+
+        fetch(APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(datos)
+        }).then(() => {
+            alert("¡Registrado con éxito! 🌟");
+            document.getElementById('formEvento').reset();
+            btn.disabled = false;
+            btn.innerText = "💾 Guardar en la Agenda";
+        });
+    });
+</script>
+</body>
+</html>
