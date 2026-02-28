@@ -14,11 +14,11 @@
         :root {
             --bg-body: #F2F4F7;
             --card-bg: #FFFFFF;
-            --primary-blue: #1A365D; /* Azul institucional */
-            --accent-red: #A82025;   /* Rojo parroquial */
+            --primary-blue: #1A365D; /* Azul institucional serio */
+            --accent-red: #A82025;   /* Rojo parroquial elegante */
             --text-main: #1F2937;
             --border-color: #E5E7EB;
-            --base-font-size: 16px; 
+            --base-font-size: 16px; /* Para control de tamaño de letra */
         }
 
         body {
@@ -30,79 +30,147 @@
         }
 
         /* --- CONTROL DE TAMAÑO DE LETRA --- */
-        .font-controls { display: flex; gap: 5px; align-items: center; }
+        .font-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
         .btn-font {
-            background: white; border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 2px 10px; font-weight: bold;
-            color: var(--primary-blue); cursor: pointer; transition: 0.2s;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2px 10px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            cursor: pointer;
+            transition: 0.2s;
         }
         .btn-font:hover { background: #f0f0f0; }
 
-        /* --- ENCABEZADO --- */
-        .header-oficial { padding: 20px 25px 0 25px; background: transparent; }
-        .header-oficial h1 {
-            color: var(--primary-blue); font-weight: 700;
-            display: flex; align-items: center; gap: 12px; margin-bottom: 0; font-size: 1.8rem;
+        /* --- ESTILO ENCABEZADO (FOTO 2) --- */
+        .header-oficial {
+            padding: 20px 25px 0 25px;
+            background: transparent;
         }
-        .header-line { border-bottom: 2px solid var(--primary-blue); margin-top: 10px; margin-bottom: 15px; }
+        .header-oficial h1 {
+            color: var(--primary-blue);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0;
+            font-size: 1.8rem;
+        }
+        .header-line {
+            border-bottom: 2px solid var(--primary-blue);
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
         .date-badge {
-            border: 1px solid var(--border-color); padding: 8px 15px;
-            border-radius: 10px; background: white; font-weight: 600; font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 10px;
+            background: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
         }
 
-        /* --- LAYOUT --- */
-        .app-container { display: flex; padding: 0 20px 20px 20px; gap: 20px; }
-        .sidebar {
-            width: 300px; background: var(--card-bg); border-radius: 24px;
-            padding: 30px; display: flex; flex-direction: column;
-            border: 1px solid var(--border-color); flex-shrink: 0;
+        /* --- LAYOUT PRINCIPAL (ESTILO DASHBOARD) --- */
+        .app-container {
+            display: flex;
+            padding: 0 20px 20px 20px;
+            gap: 20px;
         }
+
+        /* --- SIDEBAR (FOTO 1) --- */
+        .sidebar {
+            width: 300px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .sidebar-brand { font-weight: 700; color: #1e293b; font-size: 1.1rem; }
+        .sidebar-sub { color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
+        .hoy-label { color: #94a3b8; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
         .hoy-fecha { font-size: 1.8rem; font-weight: 800; line-height: 1.2; color: #1e293b; margin-bottom: 25px; }
 
+        /* Lista de Próximos en Sidebar */
+        .proximos-titulo { font-weight: 700; font-size: 0.85rem; color: var(--primary-blue); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
         .event-item-sidebar {
             padding: 12px; border-radius: 12px; background: #F9FAFB; margin-bottom: 10px;
-            border-left: 4px solid var(--accent-red); cursor: pointer;
+            border-left: 4px solid var(--accent-red); cursor: pointer; transition: 0.2s;
         }
+        .event-item-sidebar:hover { background: #F1F5F9; }
+        .event-item-title { font-weight: 700; font-size: 0.9rem; display: block; color: var(--primary-blue); }
+        .event-item-info { font-size: 0.8rem; color: #64748b; }
 
         /* --- CONTENIDO CALENDARIO --- */
         .main-content {
-            flex-grow: 1; background: var(--card-bg); border-radius: 24px;
-            padding: 30px; border: 1px solid var(--border-color);
+            flex-grow: 1;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
         }
+        .header-title { font-weight: 700; font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 25px; }
 
         /* FullCalendar Customization */
         .fc { border: none !important; }
-        .fc-button { 
-            background: #F9FAFB !important; border: 1px solid var(--border-color) !important; 
-            color: #4B5563 !important; border-radius: 8px !important;
-            padding: 4px 10px !important; font-size: 0.85rem !important; margin: 0 3px !important;
-        }
-        .fc-button-active { background: var(--primary-blue) !important; color: white !important; }
+        .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700 !important; color: #4B5563; }
         
-        /* Corregir scroll en móvil y expandir calendario */
+        /* Ajuste de botones: más pequeños, en español y con separación */
+        .fc-button { 
+            background: #F9FAFB !important; 
+            border: 1px solid var(--border-color) !important; 
+            color: #4B5563 !important;
+            text-transform: capitalize !important;
+            border-radius: 8px !important;
+            padding: 4px 10px !important; /* Un poco más pequeños */
+            font-size: 0.85rem !important;
+            margin: 0 3px !important; /* Espaciado entre ellos */
+        }
+        .fc-button-active {
+            background: var(--primary-blue) !important;
+            color: white !important;
+        }
+
+        .fc-daygrid-day-number { font-size: 0.9rem; color: #6B7280; padding: 10px !important; text-decoration: none; }
+        .fc-col-header-cell-cushion { font-size: 0.8rem; text-transform: uppercase; color: #9CA3AF; text-decoration: none; }
+        .fc-event { border-radius: 6px !important; padding: 2px 5px !important; font-size: 0.85rem !important; border: none !important; cursor: pointer; }
+
+        /* Evitar scroll interno en calendario (Expandir altura) */
         .fc-scroller { height: auto !important; overflow: hidden !important; }
-        .fc-view-harness { height: auto !important; min-height: 550px; }
+        .fc-view-harness { height: auto !important; min-height: 500px; }
 
-        /* --- MODAL (ESTILO SEGÚN IMAGEN) --- */
-        .modal-content { border-radius: 24px; border: none; overflow: hidden; }
-        .modal-header { background: var(--primary-blue); color: white; border: none; padding: 15px 25px; }
-        .modal-label { color: var(--accent-red); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 0.5px; }
-        .modal-data { font-weight: 600; color: var(--primary-blue); font-size: 1.2rem; margin-bottom: 20px; }
-        .modal-data-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 25px; }
-        .modal-badge { border-radius: 12px; padding: 12px; font-weight: 700; text-align: center; font-size: 1.1rem; }
+        /* --- MODAL (VENTANA EMERGENTE) --- */
+        .modal-content { border-radius: 24px; border: none; }
+        .modal-header { background: var(--primary-blue); color: white; border-radius: 24px 24px 0 0; }
+        .modal-label { color: var(--accent-red); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; display: block; }
+        .modal-data { font-weight: 600; color: var(--primary-blue); font-size: 1.1rem; margin-bottom: 15px; }
 
+        /* RESPONSIVIDAD */
         @media (max-width: 992px) {
             .app-container { flex-direction: column; padding: 10px; }
-            .sidebar { width: 100%; }
+            .sidebar { width: 100%; padding: 20px; }
+            .main-content { padding: 15px; border-radius: 15px; }
+            .header-oficial h1 { font-size: 1.4rem; }
+            .fc-toolbar { flex-wrap: wrap; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
+<!-- Encabezado Estilo Foto 2 -->
 <div class="header-oficial">
     <div class="d-flex justify-content-between align-items-center">
         <h1>⛪ Agenda Parroquial</h1>
         <div class="d-flex align-items-center gap-3">
+            <!-- Botones de tamaño de letra -->
             <div class="font-controls d-none d-md-flex">
                 <span class="small text-muted fw-bold">LETRA:</span>
                 <button class="btn-font" onclick="updateFontSize(-2)">A-</button>
@@ -115,56 +183,63 @@
 </div>
 
 <div class="app-container">
+    <!-- Sidebar Estilo Foto 1 -->
     <div class="sidebar">
         <div class="sidebar-brand">Parroquia</div>
         <div class="sidebar-sub">GESTIÓN DE AGENDA</div>
-        <div class="hoy-label text-muted small fw-bold">HOY</div>
+        
+        <div class="hoy-label">HOY</div>
         <div id="hoy-fecha-grande" class="hoy-fecha">--</div>
-        <div class="proximos-titulo fw-bold small mb-2 border-bottom pb-1">🔔 PRÓXIMOS EVENTOS</div>
-        <div id="lista-proximos"></div>
+
+        <div class="proximos-titulo">🔔 PRÓXIMOS EVENTOS</div>
+        <div id="lista-proximos">
+            <p class="text-muted small text-center">Cargando eventos...</p>
+        </div>
+        
+        <div class="mt-auto pt-4 d-none d-lg-block">
+            <p class="text-muted small">Haz clic en un evento para ver detalles en la ventana emergente.</p>
+        </div>
     </div>
 
+    <!-- Calendario Estilo Foto Solicitada -->
     <div class="main-content">
-        <h2 class="fw-bold mb-4" style="color: var(--primary-blue);">Calendario de Actividades</h2>
+        <h2 class="header-title">Calendario de Actividades</h2>
         <div id="calendar"></div>
     </div>
 </div>
 
-<!-- Modal de Detalles Actualizado -->
+<!-- Ventana Emergente (Modal) -->
 <div class="modal fade" id="eventModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg">
-            <div class="modal-header d-flex justify-content-between align-items-center">
-                <h5 class="modal-title fw-bold m-0" style="font-size: 1.1rem;">Detalle de Actividad</h5>
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="m-titulo">Detalle de Actividad</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <!-- Título del evento ahora dentro del cuerpo -->
-                <div id="m-titulo" class="modal-data modal-data-title"></div>
-
                 <div class="row">
-                    <div class="col-7">
-                        <span class="modal-label">FECHA</span>
+                    <div class="col-6">
+                        <span class="modal-label">Fecha</span>
                         <div id="m-fecha" class="modal-data"></div>
                     </div>
-                    <div class="col-5">
-                        <span class="modal-label">HORA</span>
+                    <div class="col-6">
+                        <span class="modal-label">Hora</span>
                         <div id="m-hora" class="modal-data"></div>
                     </div>
                     <div class="col-12">
-                        <span class="modal-label">LUGAR</span>
+                        <span class="modal-label">Lugar</span>
                         <div id="m-lugar" class="modal-data"></div>
                     </div>
                     <div class="col-12">
-                        <span class="modal-label">GRUPO RESPONSABLE</span>
+                        <span class="modal-label">Grupo Responsable</span>
                         <div id="m-grupo" class="modal-data"></div>
                     </div>
                     <div class="col-12">
-                        <span class="modal-label">DESCRIPCIÓN</span>
-                        <p id="m-desc" class="text-muted mb-4"></p>
+                        <span class="modal-label">Descripción</span>
+                        <p id="m-desc" class="text-muted" style="font-size: 1rem;"></p>
                     </div>
-                    <div class="col-12">
-                        <div id="m-estado" class="modal-badge"></div>
+                    <div class="col-12 mt-2">
+                        <div id="m-estado" class="badge p-2 w-100 fs-6" style="border-radius: 10px;"></div>
                     </div>
                 </div>
             </div>
@@ -180,6 +255,7 @@
     let bootstrapModal;
     let currentFontSize = 16;
 
+    // Función para cambiar tamaño de letra
     function updateFontSize(delta) {
         currentFontSize += delta;
         if(currentFontSize < 12) currentFontSize = 12;
@@ -189,14 +265,18 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         bootstrapModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        
         const ahora = new Date();
         document.getElementById('hoy-fecha-grande').innerText = ahora.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('header-date').innerText = ahora.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
+
         cargarDatos();
     });
 
     function cargarDatos() {
-        fetch(APP_URL).then(res => res.json()).then(data => {
+        fetch(APP_URL)
+        .then(res => res.json())
+        .then(data => {
             renderCalendario(data);
             renderListaSidebar(data);
         });
@@ -207,15 +287,26 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
             locale: 'es',
-            height: 'auto',
+            height: 'auto', // Esto evita el scroll interno y expande el calendario
             contentHeight: 'auto',
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-            buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            // Traducción manual de botones para asegurar español
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                list: 'Lista'
+            },
             events: eventos.map(ev => ({
                 title: ev.Titulo,
                 start: ev.Fecha_Hora,
                 extendedProps: ev,
-                backgroundColor: ev.Estado === 'Agendado' ? '#1A365D' : ev.Estado === 'Realizado' ? '#10B981' : '#A82025'
+                backgroundColor: ev.Estado === 'Agendado' ? '#1A365D' : '#A82025'
             })),
             eventClick: (info) => mostrarDetalle(info.event.extendedProps)
         });
@@ -225,18 +316,26 @@
     function renderListaSidebar(eventos) {
         const contenedor = document.getElementById('lista-proximos');
         contenedor.innerHTML = "";
+        
         const hoy = new Date();
         const proximos = eventos
             .filter(e => new Date(e.Fecha_Hora) >= hoy)
-            .sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora)).slice(0, 5);
-        
+            .sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora))
+            .slice(0, 5);
+
+        if(proximos.length === 0) {
+            contenedor.innerHTML = "<p class='text-muted small text-center'>No hay eventos próximos.</p>";
+            return;
+        }
+
         proximos.forEach(ev => {
             const d = new Date(ev.Fecha_Hora);
             contenedor.innerHTML += `
                 <div class="event-item-sidebar shadow-sm" onclick='mostrarDetalle(${JSON.stringify(ev)})'>
-                    <span class="fw-bold d-block" style="color:var(--primary-blue)">${ev.Titulo}</span>
-                    <span class="small text-muted">⏰ ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | ${d.toLocaleDateString('es-ES', {day:'numeric', month:'short'})}</span>
-                </div>`;
+                    <span class="event-item-title">${ev.Titulo}</span>
+                    <span class="event-item-info">⏰ ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | ${d.toLocaleDateString('es-ES', {day:'numeric', month:'short'})}</span>
+                </div>
+            `;
         });
     }
 
@@ -251,15 +350,8 @@
         
         const badge = document.getElementById('m-estado');
         badge.innerText = ev.Estado;
-
-        // Estilos de colores dinámicos para el estado
-        if(ev.Estado === 'Realizado') {
-            badge.style.backgroundColor = '#FEF3C7'; badge.style.color = '#92400E';
-        } else if(ev.Estado === 'Agendado') {
-            badge.style.backgroundColor = '#E0F2FE'; badge.style.color = '#0369A1';
-        } else {
-            badge.style.backgroundColor = '#FEE2E2'; badge.style.color = '#991B1B';
-        }
+        badge.style.backgroundColor = ev.Estado === 'Agendado' ? '#E0F2FE' : '#FEF3C7';
+        badge.style.color = ev.Estado === 'Agendado' ? '#0369A1' : '#92400E';
         
         bootstrapModal.show();
     }
