@@ -123,16 +123,16 @@
         .fc { border: none !important; }
         .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700 !important; color: #4B5563; }
         
-        /* Ajuste de botones: más pequeños, en español y con separación */
+        /* Ajuste de botones */
         .fc-button { 
             background: #F9FAFB !important; 
             border: 1px solid var(--border-color) !important; 
             color: #4B5563 !important;
             text-transform: capitalize !important;
             border-radius: 8px !important;
-            padding: 4px 10px !important; /* Un poco más pequeños */
+            padding: 4px 10px !important; 
             font-size: 0.85rem !important;
-            margin: 0 3px !important; /* Espaciado entre ellos */
+            margin: 0 3px !important; 
         }
         .fc-button-active {
             background: var(--primary-blue) !important;
@@ -143,15 +143,48 @@
         .fc-col-header-cell-cushion { font-size: 0.8rem; text-transform: uppercase; color: #9CA3AF; text-decoration: none; }
         .fc-event { border-radius: 6px !important; padding: 2px 5px !important; font-size: 0.85rem !important; border: none !important; cursor: pointer; }
 
-        /* Evitar scroll interno en calendario (Expandir altura) */
+        /* Evitar scroll interno en calendario */
         .fc-scroller { height: auto !important; overflow: hidden !important; }
         .fc-view-harness { height: auto !important; min-height: 500px; }
 
-        /* --- MODAL (VENTANA EMERGENTE) --- */
-        .modal-content { border-radius: 24px; border: none; }
-        .modal-header { background: var(--primary-blue); color: white; border-radius: 24px 24px 0 0; }
-        .modal-label { color: var(--accent-red); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; display: block; }
-        .modal-data { font-weight: 600; color: var(--primary-blue); font-size: 1.1rem; margin-bottom: 15px; }
+        /* --- MODAL (NUEVO DISEÑO SOLICITADO) --- */
+        .modal-content { border-radius: 20px; border: none; overflow: hidden; }
+        .modal-header { background: var(--primary-blue); color: white; border: none; padding: 15px 25px; }
+        /* Estilo etiquetas rojas */
+        .modal-label { 
+            color: var(--accent-red); 
+            font-weight: 800; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            margin-bottom: 2px; 
+            display: block; 
+            letter-spacing: 0.5px;
+        }
+        /* Estilo datos azul oscuro */
+        .modal-data { 
+            font-weight: 600; 
+            color: var(--primary-blue); 
+            font-size: 1.15rem; 
+            margin-bottom: 20px; 
+        }
+        /* Estilo para el título grande dentro del cuerpo */
+        .modal-data-title { 
+            font-size: 1.6rem; 
+            font-weight: 800; 
+            margin-bottom: 25px; 
+            line-height: 1.2;
+        }
+        /* Estilo badge/botón de estado abajo */
+        .modal-badge { 
+            border-radius: 12px; 
+            padding: 12px; 
+            font-weight: 700; 
+            text-align: center; 
+            font-size: 1.1rem; 
+            border: none;
+            width: 100%;
+            display: block;
+        }
 
         /* RESPONSIVIDAD */
         @media (max-width: 992px) {
@@ -170,7 +203,6 @@
     <div class="d-flex justify-content-between align-items-center">
         <h1>⛪ Agenda Parroquial</h1>
         <div class="d-flex align-items-center gap-3">
-            <!-- Botones de tamaño de letra -->
             <div class="font-controls d-none d-md-flex">
                 <span class="small text-muted fw-bold">LETRA:</span>
                 <button class="btn-font" onclick="updateFontSize(-2)">A-</button>
@@ -208,21 +240,25 @@
     </div>
 </div>
 
-<!-- Ventana Emergente (Modal) -->
+<!-- Ventana Emergente (Modal Rediseñado) -->
 <div class="modal fade" id="eventModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="m-titulo">Detalle de Actividad</h5>
+                <!-- Título genérico en cabecera según solicitado -->
+                <h5 class="modal-title fw-bold m-0" style="font-size: 1rem;">Detalle de Actividad</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
+                <!-- Título del Evento ahora en el cuerpo -->
+                <div id="m-titulo" class="modal-data modal-data-title"></div>
+
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-7">
                         <span class="modal-label">Fecha</span>
                         <div id="m-fecha" class="modal-data"></div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5">
                         <span class="modal-label">Hora</span>
                         <div id="m-hora" class="modal-data"></div>
                     </div>
@@ -236,10 +272,11 @@
                     </div>
                     <div class="col-12">
                         <span class="modal-label">Descripción</span>
-                        <p id="m-desc" class="text-muted" style="font-size: 1rem;"></p>
+                        <p id="m-desc" class="text-muted mb-4" style="font-size: 1rem;"></p>
                     </div>
                     <div class="col-12 mt-2">
-                        <div id="m-estado" class="badge p-2 w-100 fs-6" style="border-radius: 10px;"></div>
+                        <!-- Badge de estado estilo botón abajo -->
+                        <div id="m-estado" class="modal-badge"></div>
                     </div>
                 </div>
             </div>
@@ -255,7 +292,6 @@
     let bootstrapModal;
     let currentFontSize = 16;
 
-    // Función para cambiar tamaño de letra
     function updateFontSize(delta) {
         currentFontSize += delta;
         if(currentFontSize < 12) currentFontSize = 12;
@@ -265,18 +301,14 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         bootstrapModal = new bootstrap.Modal(document.getElementById('eventModal'));
-        
         const ahora = new Date();
         document.getElementById('hoy-fecha-grande').innerText = ahora.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('header-date').innerText = ahora.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
-
         cargarDatos();
     });
 
     function cargarDatos() {
-        fetch(APP_URL)
-        .then(res => res.json())
-        .then(data => {
+        fetch(APP_URL).then(res => res.json()).then(data => {
             renderCalendario(data);
             renderListaSidebar(data);
         });
@@ -287,21 +319,14 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
             locale: 'es',
-            height: 'auto', // Esto evita el scroll interno y expande el calendario
+            height: 'auto', 
             contentHeight: 'auto',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek'
             },
-            // Traducción manual de botones para asegurar español
-            buttonText: {
-                today: 'Hoy',
-                month: 'Mes',
-                week: 'Semana',
-                day: 'Día',
-                list: 'Lista'
-            },
+            buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
             events: eventos.map(ev => ({
                 title: ev.Titulo,
                 start: ev.Fecha_Hora,
@@ -316,17 +341,11 @@
     function renderListaSidebar(eventos) {
         const contenedor = document.getElementById('lista-proximos');
         contenedor.innerHTML = "";
-        
         const hoy = new Date();
         const proximos = eventos
             .filter(e => new Date(e.Fecha_Hora) >= hoy)
             .sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora))
             .slice(0, 5);
-
-        if(proximos.length === 0) {
-            contenedor.innerHTML = "<p class='text-muted small text-center'>No hay eventos próximos.</p>";
-            return;
-        }
 
         proximos.forEach(ev => {
             const d = new Date(ev.Fecha_Hora);
@@ -350,8 +369,18 @@
         
         const badge = document.getElementById('m-estado');
         badge.innerText = ev.Estado;
-        badge.style.backgroundColor = ev.Estado === 'Agendado' ? '#E0F2FE' : '#FEF3C7';
-        badge.style.color = ev.Estado === 'Agendado' ? '#0369A1' : '#92400E';
+
+        // Estilos de colores dinámicos para el estado según imagen
+        if (ev.Estado === 'Realizado') {
+            badge.style.backgroundColor = '#FEF3C7'; // Beige clarito
+            badge.style.color = '#92400E';           // Marrón/Dorado oscuro
+        } else if (ev.Estado === 'Agendado') {
+            badge.style.backgroundColor = '#E0F2FE'; // Azul clarito
+            badge.style.color = '#0369A1';           // Azul oscuro
+        } else {
+            badge.style.backgroundColor = '#FEE2E2'; // Rojo clarito
+            badge.style.color = '#991B1B';           // Rojo oscuro
+        }
         
         bootstrapModal.show();
     }
