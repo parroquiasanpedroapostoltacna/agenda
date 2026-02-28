@@ -56,7 +56,7 @@
         }
 
         .sidebar-form {
-            width: 380px;
+            width: 400px;
             flex-shrink: 0;
         }
 
@@ -145,28 +145,28 @@
                 <input type="hidden" id="event-id">
                 
                 <div class="mb-3">
-                    <label class="form-label">Título del Evento</label>
+                    <label class="form-label">TÍTULO DEL EVENTO</label>
                     <input type="text" id="titulo" class="form-control" placeholder="Ej: Misa de Difuntos" required>
                 </div>
-
-                <div class="row">
-                    <div class="col-6 mb-3">
-                        <label class="form-label">Fecha y Hora</label>
-                        <input type="datetime-local" id="fecha_hora" class="form-control" required>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label class="form-label">Lugar</label>
-                        <input type="text" id="lugar" class="form-control" placeholder="Ej: Templo" required>
-                    </div>
-                </div>
-
+            
+                <!-- Cambiamos a col-12 para que la fecha se vea grande y completa -->
                 <div class="mb-3">
-                    <label class="form-label">Nombre del Solicitante</label>
-                    <input type="text" id="solicitante" class="form-control" placeholder="Persona que solicita la actividad">
+                    <label class="form-label">FECHA Y HORA</label>
+                    <input type="datetime-local" id="fecha_hora" class="form-control" style="font-size: 1.1rem;" required>
                 </div>
-
+            
                 <div class="mb-3">
-                    <label class="form-label">Grupo Responsable</label>
+                    <label class="form-label">LUGAR</label>
+                    <input type="text" id="lugar" class="form-control" placeholder="Ej: Templo" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">NOMBRE DEL SOLICITANTE (Solo Secretaría)</label>
+                    <input type="text" id="solicitante" class="form-control" placeholder="Ej: Juan Pérez">
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">GRUPO RESPONSABLE</label>
                     <select id="grupo_select" class="form-select" onchange="toggleGrupoOtro()">
                         <option value="Parroquia">⛪ Solo Parroquia</option>
                         <option value="Pastoral Familiar">Pastoral Familiar</option>
@@ -179,23 +179,23 @@
                         <option value="grupo de liturgia">Grupo de liturgia</option>
                         <option value="Otros">➡️ Otros (Escribir...)</option>
                     </select>
-                    <input type="text" id="grupo_otro" class="form-control mt-2 d-none" placeholder="Nombre del o los responsables">
+                    <input type="text" id="grupo_otro" class="form-control mt-2 d-none" placeholder="Escribe el o los responsables...">
                 </div>
-
+            
                 <div class="mb-3">
-                    <label class="form-label">Estado</label>
+                    <label class="form-label">ESTADO</label>
                     <select id="estado" class="form-select">
                         <option value="Agendado">✅ Agendado</option>
                         <option value="Solicitado">⏳ Solicitado</option>
                         <option value="Realizado">✔ Realizado</option>
                     </select>
                 </div>
-
+            
                 <div class="mb-3">
-                    <label class="form-label">Notas / Descripción</label>
-                    <textarea id="descripcion" class="form-control" rows="2"></textarea>
+                    <label class="form-label">NOTAS / DESCRIPCIÓN</label>
+                    <textarea id="descripcion" class="form-control" rows="2" placeholder="Opcional..."></textarea>
                 </div>
-
+            
                 <button type="submit" id="btn-main" class="btn-submit">💾 Guardar Actividad</button>
                 <button type="button" id="btn-cancel" class="btn-cancel d-none" onclick="resetForm()">Cancelar Edición</button>
             </form>
@@ -299,36 +299,44 @@
     }
 
     function prepararEdicion(ev) {
-        isEditing = true;
-        document.getElementById('form-title').innerText = "🔄 Editar Actividad";
-        document.getElementById('btn-main').innerText = "🚀 Actualizar Actividad";
-        document.getElementById('btn-main').style.backgroundColor = "#A82025";
-        document.getElementById('btn-cancel').classList.remove('d-none');
-        
-        // Cargar campos
-        document.getElementById('event-id').value = ev.ID;
-        document.getElementById('titulo').value = ev.Titulo;
-        document.getElementById('fecha_hora').value = ev.Fecha_Hora;
-        document.getElementById('lugar').value = ev.Lugar;
-        document.getElementById('solicitante').value = ev.Solicitante || "";
-        document.getElementById('descripcion').value = ev.Descripcion || "";
-        document.getElementById('estado').value = ev.Estado;
+    isEditing = true;
+    document.getElementById('form-title').innerText = "🔄 Editar Actividad";
+    document.getElementById('btn-main').innerText = "🚀 Actualizar Actividad";
+    document.getElementById('btn-main').style.backgroundColor = "#A82025";
+    document.getElementById('btn-cancel').classList.remove('d-none');
+    
+    // Llenar campos básicos
+    document.getElementById('event-id').value = ev.ID;
+    document.getElementById('titulo').value = ev.Titulo;
+    document.getElementById('lugar').value = ev.Lugar;
+    document.getElementById('solicitante').value = ev.Solicitante || "";
+    document.getElementById('descripcion').value = ev.Descripcion || "";
+    document.getElementById('estado').value = ev.Estado;
 
-        // Gestión de grupo
-        const selectGrupo = document.getElementById('grupo_select');
-        const inputOtro = document.getElementById('grupo_otro');
-        const opciones = Array.from(selectGrupo.options).map(o => o.value);
-        
-        if (opciones.includes(ev.Grupo)) {
-            selectGrupo.value = ev.Grupo;
-            inputOtro.classList.add('d-none');
-        } else {
-            selectGrupo.value = "Otros";
-            inputOtro.value = ev.Grupo;
-            inputOtro.classList.remove('d-none');
-        }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    // --- CORRECCIÓN DE FECHA PARA EL NAVEGADOR ---
+    if (ev.Fecha_Hora) {
+        // Aseguramos que el formato sea exactamente YYYY-MM-DDTHH:mm
+        // Si el AppScript ya lo envía formateado, esto lo confirma.
+        let fechaLimpia = ev.Fecha_Hora.split('.')[0]; // Quita milisegundos si existen
+        document.getElementById('fecha_hora').value = fechaLimpia;
     }
+
+    // Lógica de grupo (se mantiene igual)
+    const selectGrupo = document.getElementById('grupo_select');
+    const inputOtro = document.getElementById('grupo_otro');
+    const opciones = Array.from(selectGrupo.options).map(o => o.value);
+    
+    if (opciones.includes(ev.Grupo)) {
+        selectGrupo.value = ev.Grupo;
+        inputOtro.classList.add('d-none');
+    } else {
+        selectGrupo.value = "Otros";
+        inputOtro.value = ev.Grupo;
+        inputOtro.classList.remove('d-none');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
     function resetForm() {
         isEditing = false;
