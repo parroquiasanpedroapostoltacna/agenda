@@ -86,31 +86,26 @@
         .btn-submit:hover { background-color: var(--accent-red); transform: translateY(-2px); }
         .btn-cancel { background-color: #f1f5f9; color: #64748b; border: none; border-radius: 12px; padding: 8px; width: 100%; font-weight: 600; margin-top: 10px; }
 
-        /* --- FILTROS --- */
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+        /* --- CALENDARIO --- */
+        #calendar { margin-bottom: 20px; }
+        .fc { border: none !important; }
+        .fc-toolbar-title { font-size: 1.1rem !important; font-weight: 700 !important; color: #4B5563; }
+        .fc-button { 
+            background: #F9FAFB !important; 
+            border: 1px solid var(--border-color) !important; 
+            color: #4B5563 !important;
+            text-transform: capitalize !important;
+            border-radius: 8px !important;
+            padding: 4px 10px !important;
+            font-size: 0.8rem !important;
+            margin: 0 2px !important;
         }
-        .filter-btn {
-            border: 1px solid var(--border-color);
-            background: white;
-            padding: 6px 15px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-main);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .filter-btn.active {
-            background: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
-        }
+        .fc-button-active { background: var(--primary-blue) !important; color: white !important; }
+        .fc-daygrid-day-number { font-size: 0.8rem; color: #6B7280; padding: 5px !important; text-decoration: none; }
+        .fc-col-header-cell-cushion { font-size: 0.75rem; text-transform: uppercase; color: #9CA3AF; text-decoration: none; }
+        .fc-event { border-radius: 4px !important; font-size: 0.75rem !important; cursor: pointer; border: none !important; }
 
-        /* --- LISTA DE GESTIÓN --- */
+        /* --- LISTA DE GESTIÓN MEJORADA --- */
         .event-manage-item {
             background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px;
             border-left: 6px solid var(--primary-blue); border-top: 1px solid var(--border-color);
@@ -119,6 +114,10 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
         .event-manage-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.05); background: #FDFDFD; }
+        
+        .event-info-main { flex-grow: 1; }
+        .event-item-title { font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 4px; }
+        .event-item-detail { font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
         
         .status-pill { font-size: 0.7rem; font-weight: 800; padding: 5px 12px; border-radius: 10px; text-transform: uppercase; margin-top: 8px; display: inline-block; }
         .status-agendado { background: #E0F2FE; color: #0369A1; }
@@ -133,11 +132,9 @@
             border-radius: 10px;
             font-weight: 700;
             font-size: 0.85rem;
+            transition: 0.2s;
         }
-
-        /* Calendario */
-        #calendar { margin-bottom: 20px; }
-        .fc-button { text-transform: capitalize !important; }
+        .btn-edit-list:hover { background: var(--primary-blue); color: white; }
 
         @media (max-width: 992px) {
             .app-container { flex-direction: column; padding: 10px; }
@@ -180,7 +177,7 @@
                 </div>
             
                 <div class="mb-3">
-                    <label class="form-label">NOMBRE DEL SOLICITANTE (SOLO SECRETARÍA)</label>
+                    <label class="form-label">NOMBRE DEL SOLICITANTE (Solo Secretaría)</label>
                     <input type="text" id="solicitante" class="form-control" placeholder="Ej: Juan Pérez">
                 </div>
             
@@ -230,15 +227,14 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3 px-2">
             <h6 class="fw-bold m-0" style="color: var(--primary-blue);">📋 Lista de Actividades</h6>
-            <!-- FILTROS SOLICITADOS -->
-            <div class="filter-container">
-                <button class="filter-btn active" onclick="filtrarLista('Todos', this)">Todos</button>
-                <button class="filter-btn" onclick="filtrarLista('Solicitado', this)">Solicitados</button>
-                <button class="filter-btn" onclick="filtrarLista('Agendado', this)">Agendados</button>
-                <button class="filter-btn" onclick="filtrarLista('Realizado', this)">Realizados</button>
-            </div>
+            <select id="filtro-estado" class="form-select form-select-sm w-auto" style="border-radius: 10px; font-weight: 600;" onchange="filtrarActividades()">
+                <option value="Todos">🔍 Ver Todos</option>
+                <option value="Agendado">✅ Agendados</option>
+                <option value="Solicitado">⏳ Solicitados</option>
+                <option value="Realizado">✔ Realizados</option>
+            </select>
         </div>
-
+        
         <div id="lista-gestion">
             <p class="text-center p-4 text-muted small">Cargando actividades...</p>
         </div>
@@ -250,7 +246,8 @@
 
 <script>
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec"; 
-    let baseEventos = []; // Guardaremos los eventos aquí para filtrar sin recargar la página
+    let isEditing = false;
+    let eventosData = []; // Variable global para guardar los datos y filtrar
 
     document.addEventListener('DOMContentLoaded', function() {
         const ahora = new Date();
@@ -263,8 +260,10 @@
         const inputOtro = document.getElementById('grupo_otro');
         if (select.value === "Otros") {
             inputOtro.classList.remove('d-none');
+            inputOtro.required = true;
         } else {
             inputOtro.classList.add('d-none');
+            inputOtro.required = false;
         }
     }
 
@@ -272,7 +271,7 @@
         fetch(APP_URL)
         .then(res => res.json())
         .then(data => {
-            baseEventos = data;
+            eventosData = data;
             renderCalendario(data);
             renderLista(data);
         });
@@ -284,8 +283,16 @@
             initialView: 'dayGridMonth',
             locale: 'es',
             height: 'auto',
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
-            buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana' },
+            headerToolbar: { 
+                left: 'prev,next today', 
+                center: 'title', 
+                right: 'dayGridMonth,timeGridWeek' 
+            },
+            buttonText: { 
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana'
+            },
             events: eventos.map(ev => ({
                 title: ev.Titulo,
                 start: ev.Fecha_Hora,
@@ -297,15 +304,12 @@
         calendar.render();
     }
 
-    function filtrarLista(estado, btn) {
-        // Estilo de botones
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (estado === 'Todos') {
-            renderLista(baseEventos);
+    function filtrarActividades() {
+        const filtro = document.getElementById('filtro-estado').value;
+        if (filtro === "Todos") {
+            renderLista(eventosData);
         } else {
-            const filtrados = baseEventos.filter(ev => ev.Estado === estado);
+            const filtrados = eventosData.filter(ev => ev.Estado === filtro);
             renderLista(filtrados);
         }
     }
@@ -314,15 +318,11 @@
         const contenedor = document.getElementById('lista-gestion');
         contenedor.innerHTML = "";
         
-        if (eventos.length === 0) {
-            contenedor.innerHTML = `<p class="text-center p-4 text-muted">No hay actividades en este estado.</p>`;
-            return;
-        }
-
         const listaOrdenada = eventos.sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora));
 
         listaOrdenada.forEach(ev => {
-            const d = new Date(ev.Fecha_Hora);
+            // Manejo de fecha seguro para evitar desfasaje horario al mostrar en lista
+            const d = new Date(ev.Fecha_Hora.replace('T', ' ').replace(/-/g, '/'));
             contenedor.innerHTML += `
                 <div class="event-manage-item">
                     <div class="event-info-main">
@@ -343,6 +343,7 @@
     }
 
     function prepararEdicion(ev) {
+        isEditing = true;
         document.getElementById('form-title').innerText = "🔄 Editar Actividad";
         document.getElementById('btn-main').innerText = "🚀 Actualizar Actividad";
         document.getElementById('btn-main').style.backgroundColor = "#A82025";
@@ -355,12 +356,11 @@
         document.getElementById('descripcion').value = ev.Descripcion || "";
         document.getElementById('estado').value = ev.Estado;
 
-        // --- SOLUCIÓN ERROR HORA ---
-        // Tomamos el string tal cual viene del servidor para evitar conversiones de zona horaria
         if (ev.Fecha_Hora) {
-            let fechaString = ev.Fecha_Hora.replace(' ', 'T'); // Asegura formato YYYY-MM-DDTHH:mm
-            if(fechaString.includes('.')) fechaString = fechaString.split('.')[0];
-            document.getElementById('fecha_hora').value = fechaString;
+            // CORRECCIÓN DE HORA: Tratamos el valor como texto puro para que el input datetime-local no lo desfase
+            // ev.Fecha_Hora ya viene en formato YYYY-MM-DDTHH:mm del AppScript
+            let fechaLimpia = ev.Fecha_Hora.split('.')[0]; 
+            document.getElementById('fecha_hora').value = fechaLimpia;
         }
 
         const selectGrupo = document.getElementById('grupo_select');
@@ -375,23 +375,23 @@
             inputOtro.value = ev.Grupo;
             inputOtro.classList.remove('d-none');
         }
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function resetForm() {
+        isEditing = false;
         document.getElementById('formEvento').reset();
         document.getElementById('form-title').innerText = "✍️ Nueva Actividad";
         document.getElementById('btn-main').innerText = "💾 Guardar Actividad";
         document.getElementById('btn-main').style.backgroundColor = "#1A365D";
         document.getElementById('btn-cancel').classList.add('d-none');
         document.getElementById('grupo_otro').classList.add('d-none');
-        document.getElementById('event-id').value = "";
     }
 
     document.getElementById('formEvento').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('btn-main');
-        const idActual = document.getElementById('event-id').value;
         btn.disabled = true;
         btn.innerText = "Sincronizando...";
 
@@ -399,8 +399,8 @@
         const grupoFinal = (grupoSelect === "Otros") ? document.getElementById('grupo_otro').value : grupoSelect;
 
         const datos = {
-            action: idActual ? "editar" : "crear",
-            id: idActual,
+            action: isEditing ? "editar" : "crear",
+            id: document.getElementById('event-id').value,
             titulo: document.getElementById('titulo').value,
             fecha_hora: document.getElementById('fecha_hora').value,
             lugar: document.getElementById('lugar').value,
@@ -415,7 +415,7 @@
             mode: 'no-cors',
             body: JSON.stringify(datos)
         }).then(() => {
-            alert("Operación exitosa!");
+            alert(isEditing ? "¡Actividad actualizada!" : "¡Actividad registrada!");
             location.reload();
         });
     });
