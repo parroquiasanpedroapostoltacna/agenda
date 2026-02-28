@@ -3,154 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Parroquial | Vista Oficial</title>
+    <title>Agenda Parroquial | Sistema Profesional</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Inter -->
+    <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --azul-parroquia: #1A365D;
-            --rojo-parroquia: #A82025;
-            --bg-color: #F2F4F7;
-            --border: #E5E7EB;
+            --bg-body: #F2F4F7;
+            --card-bg: #FFFFFF;
+            --primary-blue: #1A365D; /* Azul institucional serio */
+            --accent-red: #A82025;   /* Rojo parroquial elegante */
+            --text-main: #1F2937;
+            --border-color: #E5E7EB;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: #334155;
+            background-color: var(--bg-body);
+            color: var(--text-main);
             margin: 0; padding: 0;
         }
 
-        /* HEADER (Segunda Foto) */
+        /* --- ESTILO ENCABEZADO (FOTO 2) --- */
         .header-oficial {
-            padding: 20px 0;
+            padding: 20px 25px 0 25px;
             background: transparent;
         }
         .header-oficial h1 {
-            color: var(--azul-parroquia);
+            color: var(--primary-blue);
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 0;
+            font-size: 1.8rem;
         }
         .header-line {
-            border-bottom: 2px solid var(--azul-parroquia);
+            border-bottom: 2px solid var(--primary-blue);
             margin-top: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
         .date-badge {
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-color);
             padding: 8px 15px;
             border-radius: 10px;
             background: white;
             font-weight: 600;
             font-size: 0.9rem;
+            color: var(--text-main);
         }
 
-        /* LAYOUT (Primera Foto) */
-        .app-layout {
+        /* --- LAYOUT PRINCIPAL (ESTILO DASHBOARD) --- */
+        .app-container {
             display: flex;
-            gap: 20px;
             padding: 0 20px 20px 20px;
+            gap: 20px;
         }
 
+        /* --- SIDEBAR (FOTO 1) --- */
         .sidebar {
-            width: 320px;
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid var(--border);
+            width: 300px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
             flex-shrink: 0;
         }
+        .sidebar-brand { font-weight: 700; color: #1e293b; font-size: 1.1rem; }
+        .sidebar-sub { color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
+        .hoy-label { color: #94a3b8; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .hoy-fecha { font-size: 1.8rem; font-weight: 800; line-height: 1.2; color: #1e293b; margin-bottom: 25px; }
 
-        .main-calendar {
+        /* Lista de Próximos en Sidebar */
+        .proximos-titulo { font-weight: 700; font-size: 0.85rem; color: var(--primary-blue); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        .event-item-sidebar {
+            padding: 12px; border-radius: 12px; background: #F9FAFB; margin-bottom: 10px;
+            border-left: 4px solid var(--accent-red); cursor: pointer; transition: 0.2s;
+        }
+        .event-item-sidebar:hover { background: #F1F5F9; }
+        .event-item-title { font-weight: 700; font-size: 0.9rem; display: block; color: var(--primary-blue); }
+        .event-item-info { font-size: 0.8rem; color: #64748b; }
+
+        /* --- CONTENIDO CALENDARIO (ESTILO FOTO) --- */
+        .main-content {
             flex-grow: 1;
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
         }
+        .header-title { font-weight: 700; font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 25px; }
 
-        /* Sidebar Elements */
-        .sidebar-brand { font-weight: 700; color: #1e293b; margin-bottom: 2px; }
-        .sidebar-sub { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
-        .hoy-label { color: #94a3b8; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
-        .hoy-fecha { font-size: 1.8rem; font-weight: 800; line-height: 1.2; color: #1e293b; margin-bottom: 30px; }
-
-        /* Lista de Próximos */
-        .proximos-titulo { font-weight: 700; font-size: 0.9rem; color: var(--azul-parroquia); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .event-item {
-            padding: 10px;
-            border-radius: 12px;
-            border-left: 4px solid var(--rojo-parroquia);
-            background: #f8fafc;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: 0.2s;
+        /* FullCalendar Customization (Tu estilo exacto) */
+        .fc { border: none !important; }
+        .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700 !important; color: #4B5563; }
+        .fc-button { 
+            background: #F9FAFB !important; 
+            border: 1px solid var(--border-color) !important; 
+            color: #4B5563 !important;
+            text-transform: capitalize !important;
+            border-radius: 8px !important;
         }
-        .event-item:hover { background: #f1f5f9; }
-        .event-item-title { font-weight: 700; font-size: 0.95rem; display: block; }
-        .event-item-time { font-size: 0.85rem; color: #64748b; }
+        .fc-daygrid-day-number { font-size: 0.9rem; color: #6B7280; padding: 10px !important; text-decoration: none; }
+        .fc-col-header-cell-cushion { font-size: 0.8rem; text-transform: uppercase; color: #9CA3AF; text-decoration: none; }
+        .fc-event { border-radius: 6px !important; padding: 2px 5px !important; font-size: 0.85rem !important; border: none !important; cursor: pointer; }
 
-        /* Estilo Ventana Emergente (Modal) */
-        .modal-content { border-radius: 24px; border: none; overflow: hidden; }
-        .modal-header { background: var(--azul-parroquia); color: white; border: none; }
-        .modal-body { padding: 30px; font-size: 1.1rem; }
-        .modal-label { color: var(--rojo-parroquia); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        /* --- MODAL (VENTANA EMERGENTE) --- */
+        .modal-content { border-radius: 24px; border: none; }
+        .modal-header { background: var(--primary-blue); color: white; border-radius: 24px 24px 0 0; }
+        .modal-label { color: var(--accent-red); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; display: block; }
+        .modal-data { font-weight: 600; color: var(--primary-blue); font-size: 1.1rem; margin-bottom: 15px; }
 
-        /* Responsive */
+        /* RESPONSIVIDAD */
         @media (max-width: 992px) {
-            .app-layout { flex-direction: column; }
-            .sidebar { width: 100%; }
-            .header-oficial h1 { font-size: 1.5rem; }
+            .app-container { flex-direction: column; padding: 10px; }
+            .sidebar { width: 100%; padding: 20px; }
+            .main-content { padding: 15px; border-radius: 15px; }
+            .header-oficial h1 { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container-fluid px-4">
-    <!-- Header (Segunda Foto) -->
-    <div class="header-oficial">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1>⛪ Agenda Parroquial</h1>
-                <p class="text-muted mb-0">Comunidad de Agentes Pastorales</p>
-            </div>
-            <div class="date-badge" id="header-date">--</div>
+<!-- Encabezado Estilo Foto 2 -->
+<div class="header-oficial">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>⛪ Agenda Parroquial</h1>
+        <div class="date-badge" id="header-date">--</div>
+    </div>
+    <div class="header-line"></div>
+</div>
+
+<div class="app-container">
+    <!-- Sidebar Estilo Foto 1 -->
+    <div class="sidebar">
+        <div class="sidebar-brand">Parroquia</div>
+        <div class="sidebar-sub">GESTIÓN DE AGENDA</div>
+        
+        <div class="hoy-label">HOY</div>
+        <div id="hoy-fecha-grande" class="hoy-fecha">--</div>
+
+        <div class="proximos-titulo">🔔 PRÓXIMOS EVENTOS</div>
+        <div id="lista-proximos">
+            <p class="text-muted small text-center">Cargando eventos...</p>
         </div>
-        <div class="header-line"></div>
+        
+        <div class="mt-auto pt-4 d-none d-lg-block">
+            <p class="text-muted small">Haz clic en un evento para ver detalles en la ventana emergente.</p>
+        </div>
     </div>
 
-    <!-- Layout (Primera Foto) -->
-    <div class="app-layout">
-        <!-- Sidebar -->
-        <div class="sidebar shadow-sm">
-            <div class="sidebar-brand">Parroquia</div>
-            <div class="sidebar-sub">GESTIÓN DE AGENDA</div>
-
-            <div class="hoy-label">HOY</div>
-            <div class="hoy-fecha" id="hoy-fecha-grande">--</div>
-
-            <div class="proximos-titulo">🔔 PRÓXIMOS EVENTOS</div>
-            <div id="lista-proximos">
-                <!-- Se llena dinámicamente -->
-                <p class="text-muted small">Cargando...</p>
-            </div>
-            
-            <p class="text-muted small mt-4" style="line-height: 1.4;">Haz clic en un evento del calendario para ver los detalles aquí o en pantalla completa.</p>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-calendar shadow-sm">
-            <h5 class="fw-bold mb-4" style="color: var(--azul-parroquia);">Calendario de Actividades</h5>
-            <div id="calendar"></div>
-        </div>
+    <!-- Calendario Estilo Foto Solicitada -->
+    <div class="main-content">
+        <h2 class="header-title">Calendario de Actividades</h2>
+        <div id="calendar"></div>
     </div>
 </div>
 
@@ -162,30 +173,30 @@
                 <h5 class="modal-title fw-bold" id="m-titulo">Detalle de Actividad</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="row g-3">
+            <div class="modal-body p-4">
+                <div class="row">
                     <div class="col-6">
-                        <div class="modal-label">Fecha</div>
-                        <div id="m-fecha" class="fw-bold"></div>
+                        <span class="modal-label">Fecha</span>
+                        <div id="m-fecha" class="modal-data"></div>
                     </div>
                     <div class="col-6">
-                        <div class="modal-label">Hora</div>
-                        <div id="m-hora" class="fw-bold"></div>
+                        <span class="modal-label">Hora</span>
+                        <div id="m-hora" class="modal-data"></div>
                     </div>
                     <div class="col-12">
-                        <div class="modal-label">Lugar</div>
-                        <div id="m-lugar" class="fw-bold"></div>
+                        <span class="modal-label">Lugar</span>
+                        <div id="m-lugar" class="modal-data"></div>
                     </div>
                     <div class="col-12">
-                        <div class="modal-label">Grupo Responsable</div>
-                        <div id="m-grupo" class="fw-bold"></div>
+                        <span class="modal-label">Grupo Responsable</span>
+                        <div id="m-grupo" class="modal-data"></div>
                     </div>
                     <div class="col-12">
-                        <div class="modal-label">Descripción</div>
-                        <p id="m-desc" class="text-secondary"></p>
+                        <span class="modal-label">Descripción</span>
+                        <p id="m-desc" class="text-muted" style="font-size: 1rem;"></p>
                     </div>
-                    <div class="col-12">
-                        <div id="m-estado" class="badge p-2 w-100 fs-6"></div>
+                    <div class="col-12 mt-2">
+                        <div id="m-estado" class="badge p-2 w-100 fs-6" style="border-radius: 10px;"></div>
                     </div>
                 </div>
             </div>
@@ -197,19 +208,17 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
+    // URL DE TU APP SCRIPT
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
     let bootstrapModal;
 
     document.addEventListener('DOMContentLoaded', function() {
         bootstrapModal = new bootstrap.Modal(document.getElementById('eventModal'));
         
-        // Poner fechas actuales
-        const hoy = new Date();
-        const opcionesLargas = { day: 'numeric', month: 'long', year: 'numeric' };
-        const opcionesCortas = { weekday: 'long', day: 'numeric', month: 'short' };
-        
-        document.getElementById('hoy-fecha-grande').innerText = hoy.toLocaleDateString('es-ES', opcionesLargas);
-        document.getElementById('header-date').innerText = hoy.toLocaleDateString('es-ES', opcionesCortas);
+        // Configurar fechas iniciales
+        const ahora = new Date();
+        document.getElementById('hoy-fecha-grande').innerText = ahora.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('header-date').innerText = ahora.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
 
         cargarDatos();
     });
@@ -219,7 +228,7 @@
         .then(res => res.json())
         .then(data => {
             renderCalendario(data);
-            renderLista(data);
+            renderListaSidebar(data);
         });
     }
 
@@ -228,59 +237,61 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
             locale: 'es',
-            height: 'auto',
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
             events: eventos.map(ev => ({
                 title: ev.Titulo,
                 start: ev.Fecha_Hora,
                 extendedProps: ev,
-                backgroundColor: ev.Estado === 'Agendado' ? '#1A365D' : '#A82025',
-                borderColor: 'transparent'
+                backgroundColor: ev.Estado === 'Agendado' ? '#1A365D' : '#A82025'
             })),
-            eventClick: (info) => mostrarModal(info.event.extendedProps)
+            eventClick: (info) => mostrarDetalle(info.event.extendedProps)
         });
         calendar.render();
     }
 
-    function renderLista(eventos) {
+    function renderListaSidebar(eventos) {
         const contenedor = document.getElementById('lista-proximos');
         contenedor.innerHTML = "";
         
-        // Solo eventos futuros
         const hoy = new Date();
         const proximos = eventos
-            .filter(ev => new Date(ev.Fecha_Hora) >= hoy)
+            .filter(e => new Date(e.Fecha_Hora) >= hoy)
             .sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora))
             .slice(0, 5);
 
         if(proximos.length === 0) {
-            contenedor.innerHTML = "<p class='small text-muted'>No hay eventos próximos.</p>";
+            contenedor.innerHTML = "<p class='text-muted small text-center'>No hay eventos próximos.</p>";
             return;
         }
 
         proximos.forEach(ev => {
             const d = new Date(ev.Fecha_Hora);
             contenedor.innerHTML += `
-                <div class="event-item" onclick='mostrarModal(${JSON.stringify(ev)})'>
+                <div class="event-item-sidebar shadow-sm" onclick='mostrarDetalle(${JSON.stringify(ev)})'>
                     <span class="event-item-title">${ev.Titulo}</span>
-                    <span class="event-item-time">📅 ${d.toLocaleDateString()} - ${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                    <span class="event-item-info">⏰ ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | ${d.toLocaleDateString('es-ES', {day:'numeric', month:'short'})}</span>
                 </div>
             `;
         });
     }
 
-    function mostrarModal(ev) {
-        const d = new Date(ev.Fecha_Hora);
+    function mostrarDetalle(ev) {
+        const date = new Date(ev.Fecha_Hora);
         document.getElementById('m-titulo').innerText = ev.Titulo;
-        document.getElementById('m-fecha').innerText = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-        document.getElementById('m-hora').innerText = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('m-fecha').innerText = date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('m-hora').innerText = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         document.getElementById('m-lugar').innerText = ev.Lugar;
-        document.getElementById('m-grupo').innerText = ev.Grupo || "No asignado";
-        document.getElementById('m-desc').innerText = ev.Descripcion || "Sin descripción.";
+        document.getElementById('m-grupo').innerText = ev.Grupo || "No especificado";
+        document.getElementById('m-desc').innerText = ev.Descripcion || "Sin descripción adicional.";
         
         const badge = document.getElementById('m-estado');
         badge.innerText = ev.Estado;
-        badge.className = `badge p-2 w-100 fs-6 ${ev.Estado === 'Agendado' ? 'bg-primary' : 'bg-danger'}`;
+        badge.style.backgroundColor = ev.Estado === 'Agendado' ? '#E0F2FE' : '#FEF3C7';
+        badge.style.color = ev.Estado === 'Agendado' ? '#0369A1' : '#92400E';
         
         bootstrapModal.show();
     }
