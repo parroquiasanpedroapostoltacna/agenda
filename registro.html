@@ -3,94 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✍️ Registro de Actividades</title>
+    <title>Registro Parroquial | BraiO Style</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1565C0; --secondary: #C62828; --bg: #f0f2f5;
-        }
         body { 
-            font-family: 'Quicksand', sans-serif; 
-            background-color: var(--bg); color: #333; 
-            padding-bottom: 50px;
+            background-color: #F4F7FB; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
-        .admin-card {
-            background: white; border: none; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 30px;
+        .form-container {
+            background: white;
+            border-radius: 35px;
+            padding: 50px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(0,0,0,0.02);
         }
-        .header-section {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; padding: 40px 20px; border-radius: 0 0 40px 40px;
-            margin-bottom: -40px; text-align: center;
+        .input-group-modern { margin-bottom: 25px; }
+        .input-group-modern label {
+            font-weight: 700; color: #1E3A8A; margin-bottom: 10px; display: block; margin-left: 5px;
         }
-        .form-label { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
         .form-control, .form-select {
-            border-radius: 12px; border: 2px solid #eee; padding: 12px;
-            font-size: 1.1rem; transition: 0.3s;
+            border-radius: 18px;
+            background-color: #F8FAFC;
+            border: 2px solid transparent;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
         }
-        .form-control:focus { border-color: var(--secondary); box-shadow: none; }
-        .btn-save {
-            background: var(--secondary); color: white; border: none;
-            padding: 15px; border-radius: 15px; font-weight: 700; font-size: 1.3rem;
-            width: 100%; margin-top: 20px; transition: transform 0.2s;
+        .form-control:focus {
+            background-color: white; border-color: #E11D48; box-shadow: 0 10px 20px rgba(225, 29, 72, 0.05);
         }
-        .btn-save:active { transform: scale(0.98); }
-        .emoji-icon { font-size: 1.5rem; margin-right: 8px; }
+        .btn-create {
+            background-color: #7C3AED; /* Púrpura como en la imagen 2 */
+            color: white;
+            border-radius: 20px;
+            padding: 18px;
+            font-weight: 800;
+            width: 100%;
+            border: none;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+        }
+        .btn-create:hover { background-color: #6D28D9; }
+        .brand-icon {
+            width: 60px; height: 60px; background: #E11D48; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 2rem; margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div class="header-section">
-    <h1>📝 Registro Parroquial</h1>
-    <p>Secretaría: Ingresa los eventos con amor y orden ✨</p>
-</div>
+<div class="form-container">
+    <div class="brand-icon">⛪</div>
+    <h1 class="fw-bold mb-1">Nueva Actividad</h1>
+    <p class="text-muted mb-5">Completa los datos para agendar en la comunidad.</p>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="admin-card">
-                <form id="formEvento">
-                    <div class="mb-4">
-                        <label class="form-label"><span class="emoji-icon">🏷️</span>Título del Evento</label>
-                        <input type="text" id="titulo" class="form-control" placeholder="Ej: Misa de Confirmación" required>
-                    </div>
+    <form id="formEvento">
+        <div class="input-group-modern">
+            <label>Título del evento</label>
+            <input type="text" id="titulo" class="form-control" placeholder="Ej: Bautizos Comunitarios" required>
+        </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label"><span class="emoji-icon">⏰</span>Fecha y Hora</label>
-                            <input type="datetime-local" id="fecha_hora" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label"><span class="emoji-icon">📍</span>Lugar</label>
-                            <input type="text" id="lugar" class="form-control" placeholder="Ej: Salón Parroquial" required>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label"><span class="emoji-icon">👥</span>Grupo Responsable</label>
-                            <input type="text" id="grupo" class="form-control" placeholder="Ej: Catequistas">
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label"><span class="emoji-icon">🚦</span>Estado</label>
-                            <select id="estado" class="form-select">
-                                <option value="Solicitado">⏳ Solicitado</option>
-                                <option value="Agendado" selected>✅ Agendado</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label"><span class="emoji-icon">📖</span>Descripción corta</label>
-                        <textarea id="descripcion" class="form-control" rows="2" placeholder="Detalles importantes..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn-save">💾 Guardar en la Agenda</button>
-                </form>
+        <div class="row">
+            <div class="col-md-6 input-group-modern">
+                <label>📅 Fecha y Hora</label>
+                <input type="datetime-local" id="fecha_hora" class="form-control" required>
+            </div>
+            <div class="col-md-6 input-group-modern">
+                <label>📍 Lugar</label>
+                <input type="text" id="lugar" class="form-control" placeholder="Templo" required>
             </div>
         </div>
-    </div>
+
+        <div class="row">
+            <div class="col-md-6 input-group-modern">
+                <label>👥 Grupo</label>
+                <input type="text" id="grupo" class="form-control" placeholder="Ej: Coro">
+            </div>
+            <div class="col-md-6 input-group-modern">
+                <label>🚦 Estado</label>
+                <select id="estado" class="form-select">
+                    <option value="Agendado">✅ Agendado</option>
+                    <option value="Solicitado">⏳ Solicitado</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-group-modern">
+            <label>📝 Notas adicionales</label>
+            <textarea id="descripcion" class="form-control" rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn-create">＋ Crear Agenda</button>
+    </form>
 </div>
 
 <script>
@@ -99,8 +109,8 @@
     document.getElementById('formEvento').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = e.target.querySelector('button');
+        btn.innerText = "Sincronizando... 🔄";
         btn.disabled = true;
-        btn.innerText = "Guardando en la nube... ☁️";
 
         const datos = {
             action: "crear",
@@ -117,10 +127,8 @@
             mode: 'no-cors',
             body: JSON.stringify(datos)
         }).then(() => {
-            alert("¡Registrado con éxito! 🌟");
-            document.getElementById('formEvento').reset();
-            btn.disabled = false;
-            btn.innerText = "💾 Guardar en la Agenda";
+            alert("¡Listo! Agenda actualizada 🌟");
+            location.reload();
         });
     });
 </script>
