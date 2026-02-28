@@ -3,80 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⛪ Nuestra Agenda Parroquial</title>
+    <title>Agenda Parroquial | Aesthetic</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1565C0; --secondary: #C62828; }
-        body { font-family: 'Quicksand', sans-serif; background-color: #f8f9fa; font-size: 1.2rem; }
-        
-        .navbar-parroquia {
-            background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            padding: 15px; border-bottom: 4px solid var(--secondary);
+        :root {
+            --bg-color: #F4F7FB;
+            --primary-blue: #1E3A8A; /* Azul oscuro elegante */
+            --accent-red: #E11D48;   /* Rojo vibrante moderno */
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --radius: 24px;
         }
-        .calendar-card {
-            background: white; border-radius: 30px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg-color);
+            color: #1f2937;
+            overflow-x: hidden;
         }
-        
-        /* Estilo Lista Aesthetic */
-        .event-card {
-            background: white; border: none; border-radius: 20px;
-            margin-bottom: 15px; transition: 0.3s;
-            border-left: 10px solid var(--primary); padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+
+        /* Sidebar estilo Scheduly */
+        .sidebar-info {
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 20px 50px rgba(30, 58, 138, 0.2);
         }
-        .event-card:hover { transform: translateY(-5px); }
-        .event-title { color: var(--primary); font-weight: 700; font-size: 1.4rem; }
-        .event-meta { color: #666; font-size: 1.1rem; margin-top: 5px; }
-        .badge-status {
-            border-radius: 50px; padding: 8px 15px; font-weight: 600;
+
+        /* Tarjetas estilo BraiO */
+        .main-card {
+            background: var(--glass-white);
+            border: 1px solid white;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            padding: 25px;
+            margin-bottom: 20px;
         }
-        
-        /* Ajuste para gente mayor */
-        .fc .fc-toolbar-title { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .fc .fc-button-primary { background-color: var(--primary); border: none; border-radius: 10px; }
+
+        .event-pill {
+            border-radius: 15px;
+            border: none;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            background: white;
+            border-left: 6px solid var(--accent-red);
+            cursor: pointer;
+        }
+
+        .event-pill:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        /* Calendario moderno */
+        .fc { background: white; padding: 20px; border-radius: var(--radius); border: none; }
+        .fc-toolbar-title { font-weight: 800 !important; color: var(--primary-blue); }
+        .fc-button-primary { 
+            background-color: var(--primary-blue) !important; 
+            border: none !important; 
+            border-radius: 12px !important;
+            padding: 8px 16px !important;
+        }
+
+        .status-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 10px;
+        }
+
+        .btn-action {
+            background-color: #FFD600; /* Amarillo como en la imagen */
+            color: #000;
+            border-radius: 15px;
+            font-weight: 700;
+            border: none;
+            padding: 12px 25px;
+        }
+
+        h1 { font-weight: 800; font-size: 2.2rem; margin-bottom: 25px; }
+        .text-big { font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-parroquia sticky-top">
-    <div class="container d-flex justify-content-between align-items-center">
-        <span class="navbar-brand mb-0 h1" style="color: var(--primary); font-weight: 800;">⛪ Comunidad en Oración</span>
-        <span class="fs-5">Hoy: <span id="fecha-hoy"></span></span>
-    </div>
-</nav>
-
-<div class="container mt-4">
+<div class="container-fluid p-4">
     <div class="row">
-        <!-- Calendario -->
-        <div class="col-lg-7">
-            <div class="calendar-card">
-                <h3 class="mb-4">📅 Vista Mensual</h3>
-                <div id="calendar"></div>
+        <!-- Barra Lateral Informativa -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar-info d-flex flex-column justify-content-between">
+                <div>
+                    <div class="mb-5">
+                        <h4 class="fw-bold">⛪ Parroquia</h4>
+                        <p class="opacity-75">Agenda Pastoral</p>
+                    </div>
+                    
+                    <div id="detalle-evento">
+                        <p class="opacity-50">Selecciona un evento para ver detalles</p>
+                        <!-- Se llena al dar click -->
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2907/2907230.png" width="50" class="mb-3">
+                    <h5>¿Necesitas ayuda?</h5>
+                    <p class="small opacity-75">Contacta a secretaría para modificaciones.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Listado -->
-        <div class="col-lg-5">
-            <h3 class="mb-4">🔔 Próximas Actividades</h3>
-            <div id="lista-eventos">
-                <!-- Se cargan dinámicamente -->
+        <!-- Contenido Principal -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Calendario <span style="color: var(--accent-red)">Pastoral</span> ✨</h1>
+                <div class="d-flex gap-2">
+                    <div class="bg-white p-2 rounded-4 shadow-sm px-4">
+                        <span id="reloj" class="fw-bold text-primary">00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Calendario Principal -->
+                <div class="col-md-8">
+                    <div class="main-card">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+
+                <!-- Lista de Próximos -->
+                <div class="col-md-4">
+                    <h5 class="fw-bold mb-3">🔔 Próximos Eventos</h5>
+                    <div id="lista-eventos" style="max-height: 70vh; overflow-y: auto;">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-
 <script>
     const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
 
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('fecha-hoy').innerText = new Date().toLocaleDateString();
+        actualizarReloj();
+        setInterval(actualizarReloj, 1000);
         cargarDatos();
     });
+
+    function actualizarReloj() {
+        const now = new Date();
+        document.getElementById('reloj').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
 
     function cargarDatos() {
         fetch(APP_URL)
@@ -92,12 +180,14 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'es',
-            headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+            height: 'auto',
             events: eventos.map(ev => ({
-                title: "📍 " + ev.Titulo,
+                title: ev.Titulo,
                 start: ev.Fecha_Hora,
-                color: ev.Estado === 'Solicitado' ? '#FFC107' : '#1565C0'
-            }))
+                extendedProps: ev,
+                color: ev.Estado === 'Agendado' ? '#1E3A8A' : '#E11D48'
+            })),
+            eventClick: (info) => mostrarDetalle(info.event.extendedProps)
         });
         calendar.render();
     }
@@ -105,34 +195,53 @@
     function renderLista(eventos) {
         const contenedor = document.getElementById('lista-eventos');
         contenedor.innerHTML = "";
-
-        if(eventos.length === 0) {
-            contenedor.innerHTML = "<h4>No hay eventos programados 😊</h4>";
-            return;
-        }
-
-        eventos.forEach(ev => {
+        eventos.slice(0, 10).forEach(ev => {
             const fecha = new Date(ev.Fecha_Hora);
-            const card = `
-                <div class="event-card shadow-sm">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="event-title">${ev.Titulo}</div>
-                        <span class="badge ${ev.Estado === 'Agendado' ? 'bg-success' : 'bg-warning text-dark'} badge-status">
-                            ${ev.Estado === 'Agendado' ? '✅' : '⏳'} ${ev.Estado}
-                        </span>
+            contenedor.innerHTML += `
+                <div class="event-pill" onclick='mostrarDetalle(${JSON.stringify(ev)})'>
+                    <div class="d-flex justify-content-between">
+                        <span class="small fw-bold text-muted text-uppercase">${fecha.toLocaleDateString()}</span>
+                        <span class="status-tag ${ev.Estado === 'Agendado' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger'}">${ev.Estado}</span>
                     </div>
-                    <div class="event-meta">
-                        <div>📅 ${fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-                        <div>⏰ ${fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                        <div>📍 Lugar: <b>${ev.Lugar}</b></div>
-                        <div>👥 Grupo: <i>${ev.Grupo}</i></div>
-                    </div>
-                    <hr>
-                    <p class="mb-0 text-muted">💬 ${ev.Descripcion || 'Sin descripción'}</p>
+                    <div class="fw-bold mt-1">${ev.Titulo}</div>
+                    <div class="small text-muted">📍 ${ev.Lugar}</div>
                 </div>
             `;
-            contenedor.innerHTML += card;
         });
+    }
+
+    function mostrarDetalle(ev) {
+        const fecha = new Date(ev.Fecha_Hora);
+        const detalle = document.getElementById('detalle-evento');
+        detalle.innerHTML = `
+            <div class="animate__animated animate__fadeIn">
+                <span class="badge bg-light text-dark mb-3">${ev.Grupo}</span>
+                <h2 class="fw-bold mb-4">${ev.Titulo}</h2>
+                <div class="mb-3 d-flex align-items-center">
+                    <span class="me-3 fs-3">📅</span>
+                    <div>
+                        <div class="small opacity-50">FECHA</div>
+                        <div class="fw-bold">${fecha.toLocaleDateString()}</div>
+                    </div>
+                </div>
+                <div class="mb-3 d-flex align-items-center">
+                    <span class="me-3 fs-3">⏰</span>
+                    <div>
+                        <div class="small opacity-50">HORA</div>
+                        <div class="fw-bold">${fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    </div>
+                </div>
+                <div class="mb-4 d-flex align-items-center">
+                    <span class="me-3 fs-3">📍</span>
+                    <div>
+                        <div class="small opacity-50">LUGAR</div>
+                        <div class="fw-bold">${ev.Lugar}</div>
+                    </div>
+                </div>
+                <p class="opacity-75 bg-white bg-opacity-10 p-3 rounded-4">${ev.Descripcion || 'Sin descripción'}</p>
+                <button class="btn btn-action w-100 mt-3">Unirse / Avisar asistencia ></button>
+            </div>
+        `;
     }
 </script>
 </body>
