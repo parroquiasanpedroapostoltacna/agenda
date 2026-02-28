@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Parroquial | Secretaría</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1A365D;
+            --accent-red: #A82025;
+            --bg-body: #F1F5F9;
+        }
+        body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; padding: 20px 0; }
+        
+        /* Tarjetas Estilo BraiO */
+        .register-card {
+            background: white; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px; margin-bottom: 20px; border: 1px solid #E2E8F0;
+        }
+
+        .form-label { font-weight: 700; color: var(--primary-blue); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control, .form-select {
+            border-radius: 12px; padding: 12px; border: 1.5px solid #E2E8F0; background-color: #F8FAFC;
+        }
+        .form-control:focus { border-color: var(--accent-red); box-shadow: none; background: white; }
+        
+        .btn-submit {
+            background-color: var(--primary-blue); color: white; border-radius: 12px;
+            padding: 15px; font-weight: 700; width: 100%; border: none; transition: 0.3s;
+        }
+        .btn-submit:hover { background-color: var(--accent-red); transform: translateY(-2px); }
+        .btn-cancel { background-color: #e2e8f0; color: #475569; border-radius: 12px; padding: 10px; width: 100%; border: none; margin-top: 10px; font-weight: 600; }
+
+        /* Estilo Calendario Pequeño */
+        #calendar { background: white; padding: 10px; border-radius: 15px; font-size: 0.8rem; }
+        .fc .fc-toolbar-title { font-size: 1rem !important; font-weight: 700; color: var(--primary-blue); }
+        .fc-button { padding: 4px 8px !important; font-size: 0.7rem !important; text-transform: capitalize !important; }
+
+        /* Lista de Gestión */
+        .event-manage-item {
+            background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px;
+            border-left: 5px solid var(--primary-blue); display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #edf2f7; border-right: 1px solid #edf2f7; border-bottom: 1px solid #edf2f7;
+        }
+        .status-pill { font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .status-agendado { background: #E0F2FE; color: #0369A1; }
+        .status-solicitado { background: #FEF3C7; color: #92400E; }
+        
+        @media (max-width: 768px) {
+            .register-card { padding: 20px; border-radius: 15px; }
+            .event-manage-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .btn-edit-small { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+        <div class="col-lg-5">
+            <div class="register-card sticky-top" style="top: 20px;">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold m-0" id="form-title" style="color: var(--primary-blue);">✍️ Nuevo Registro</h2>
+                    <p class="text-muted small" id="form-subtitle">Ingresa los datos de la actividad</p>
+                </div>
+                
+                <form id="formEvento">
+                    <input type="hidden" id="event-id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">TÍTULO DEL EVENTO</label>
+                        <input type="text" id="titulo" class="form-control" placeholder="Ej: Misa de Difuntos" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">FECHA Y HORA</label>
+                            <input type="datetime-local" id="fecha_hora" class="form-control" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">LUGAR</label>
+                            <input type="text" id="lugar" class="form-control" placeholder="Ej: Templo" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">NOMBRE DEL SOLICITANTE (Solo Secretaría)</label>
+                        <input type="text" id="solicitante" class="form-control" placeholder="Ej: Juan Pérez">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">GRUPO RESPONSABLE</label>
+                        <select id="grupo_select" class="form-select" onchange="toggleGrupoOtro()">
+                            <option value="Parroquia">⛪ Solo Parroquia</option>
+                            <option value="Pastoral Familiar">Pastoral Familiar</option>
+                            <option value="Pastoral juvenil">Pastoral juvenil</option>
+                            <option value="Coro Juvenil">Coro Juvenil</option>
+                            <option value="Coro de niños">Coro de niños</option>
+                            <option value="Catequesis confirmacion">Catequesis confirmación</option>
+                            <option value="catequesis de primera comunion">Catequesis primera comunión</option>
+                            <option value="catequesis pre-bautismal">Catequesis pre-bautismal</option>
+                            <option value="grupo de liturgia">Grupo de liturgia</option>
+                            <option value="Otros">➡️ Otros (Escribir...)</option>
+                        </select>
+                        <input type="text" id="grupo_otro" class="form-control mt-2 d-none" placeholder="Escribe el o los responsables...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">ESTADO</label>
+                        <select id="estado" class="form-select">
+                            <option value="Agendado">✅ Agendado</option>
+                            <option value="Solicitado">⏳ Solicitado</option>
+                            <option value="Realizado">✔ Realizado</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">NOTAS / DESCRIPCIÓN</label>
+                        <textarea id="descripcion" class="form-control" rows="2" placeholder="Opcional..."></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-main" class="btn-submit">💾 Guardar Actividad</button>
+                    <button type="button" id="btn-cancel" class="btn-cancel d-none" onclick="resetForm()">Cancelar Edición</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: CALENDARIO Y LISTA -->
+        <div class="col-lg-7">
+            <!-- Calendario Pequeño -->
+            <div class="register-card">
+                <h6 class="fw-bold mb-3" style="color: var(--primary-blue);">📅 Vista Rápida</h6>
+                <div id="calendar"></div>
+            </div>
+
+            <!-- Lista de Gestión -->
+            <h6 class="fw-bold mb-3 px-2" style="color: var(--primary-blue);">📋 Gestión de Actividades (Próximas)</h6>
+            <div id="lista-gestion">
+                <!-- Se llena dinámicamente -->
+                <p class="text-center p-5">Cargando actividades...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script>
+    const APP_URL = "https://script.google.com/macros/s/AKfycbwn5l3WFoq0YQYhxoYevv-1_f5iNxraiWBKbRIlLGa8IFT7593isaHqkAdfVEq21jmN/exec";
+    let isEditing = false;
+    let dbEventos = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarDatos();
+    });
+
+    function toggleGrupoOtro() {
+        const select = document.getElementById('grupo_select');
+        const inputOtro = document.getElementById('grupo_otro');
+        if (select.value === "Otros") {
+            inputOtro.classList.remove('d-none');
+            inputOtro.required = true;
+        } else {
+            inputOtro.classList.add('d-none');
+            inputOtro.required = false;
+        }
+    }
+
+    function cargarDatos() {
+        fetch(APP_URL)
+        .then(res => res.json())
+        .then(data => {
+            dbEventos = data;
+            renderCalendario(data);
+            renderLista(data);
+        });
+    }
+
+    function renderCalendario(eventos) {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            height: 380,
+            headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+            buttonText: { today: 'Hoy' },
+            events: eventos.map(ev => ({
+                title: ev.Titulo,
+                start: ev.Fecha_Hora,
+                extendedProps: ev,
+                backgroundColor: ev.Estado === 'Agendado' ? '#1A365D' : '#A82025'
+            })),
+            eventClick: (info) => prepararEdicion(info.event.extendedProps)
+        });
+        calendar.render();
+    }
+
+    function renderLista(eventos) {
+        const contenedor = document.getElementById('lista-gestion');
+        contenedor.innerHTML = "";
+        
+        // Ordenar por fecha (más próxima primero)
+        const hoy = new Date();
+        const listaOrdenada = eventos
+            .sort((a,b) => new Date(a.Fecha_Hora) - new Date(b.Fecha_Hora));
+
+        listaOrdenada.forEach(ev => {
+            const d = new Date(ev.Fecha_Hora);
+            contenedor.innerHTML += `
+                <div class="event-manage-item shadow-sm">
+                    <div style="flex:1">
+                        <div class="fw-bold" style="color:var(--primary-blue)">${ev.Titulo}</div>
+                        <div class="small text-muted">📅 ${d.toLocaleDateString()} | ⏰ ${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                        <div class="small"><b>📍 Lugar:</b> ${ev.Lugar}</div>
+                        <div class="small"><b>👤 Solicitó:</b> ${ev.Solicitante || 'N/A'}</div>
+                        <span class="status-pill ${ev.Estado === 'Agendado' ? 'status-agendado' : 'status-solicitado'}">${ev.Estado}</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary btn-edit-small fw-bold px-3" onclick='prepararEdicion(${JSON.stringify(ev)})'>Editar</button>
+                </div>
+            `;
+        });
+    }
+
+    // FUNCIÓN PARA CARGAR DATOS EN EL FORMULARIO
+    function prepararEdicion(ev) {
+        isEditing = true;
+        document.getElementById('form-title').innerText = "🔄 Editar Actividad";
+        document.getElementById('form-subtitle').innerText = "Modifica los datos y presiona actualizar";
+        document.getElementById('btn-main').innerText = "🚀 Actualizar Actividad";
+        document.getElementById('btn-main').style.backgroundColor = "#A82025";
+        document.getElementById('btn-cancel').classList.remove('d-none');
+        
+        // Llenar campos
+        document.getElementById('event-id').value = ev.ID;
+        document.getElementById('titulo').value = ev.Titulo;
+        document.getElementById('fecha_hora').value = ev.Fecha_Hora;
+        document.getElementById('lugar').value = ev.Lugar;
+        document.getElementById('solicitante').value = ev.Solicitante || "";
+        document.getElementById('descripcion').value = ev.Descripcion || "";
+        document.getElementById('estado').value = ev.Estado;
+
+        // Lógica de grupo
+        const selectGrupo = document.getElementById('grupo_select');
+        const inputOtro = document.getElementById('grupo_otro');
+        const opciones = Array.from(selectGrupo.options).map(o => o.value);
+        
+        if (opciones.includes(ev.Grupo)) {
+            selectGrupo.value = ev.Grupo;
+            inputOtro.classList.add('d-none');
+        } else {
+            selectGrupo.value = "Otros";
+            inputOtro.value = ev.Grupo;
+            inputOtro.classList.remove('d-none');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        isEditing = false;
+        document.getElementById('formEvento').reset();
+        document.getElementById('form-title').innerText = "✍️ Nuevo Registro";
+        document.getElementById('btn-main').innerText = "💾 Guardar Actividad";
+        document.getElementById('btn-main').style.backgroundColor = "#1A365D";
+        document.getElementById('btn-cancel').classList.add('d-none');
+        document.getElementById('grupo_otro').classList.add('d-none');
+    }
+
+    // MANEJO DEL SUBMIT (CREAR O EDITAR)
+    document.getElementById('formEvento').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-main');
+        btn.disabled = true;
+        btn.innerText = "Sincronizando...";
+
+        // Determinar valor del grupo
+        const grupoSelect = document.getElementById('grupo_select').value;
+        const grupoFinal = (grupoSelect === "Otros") ? document.getElementById('grupo_otro').value : grupoSelect;
+
+        const datos = {
+            action: isEditing ? "editar" : "crear",
+            id: document.getElementById('event-id').value,
+            titulo: document.getElementById('titulo').value,
+            fecha_hora: document.getElementById('fecha_hora').value,
+            lugar: document.getElementById('lugar').value,
+            solicitante: document.getElementById('solicitante').value,
+            grupo: grupoFinal,
+            estado: document.getElementById('estado').value,
+            descripcion: document.getElementById('descripcion').value
+        };
+
+        fetch(APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(datos)
+        }).then(() => {
+            alert(isEditing ? "¡Actividad actualizada!" : "¡Actividad registrada!");
+            location.reload();
+        }).catch(err => {
+            alert("Error al conectar con el servidor");
+            btn.disabled = false;
+        });
+    });
+</script>
+</body>
+</html>
